@@ -120,7 +120,6 @@ public class PlayerController : MonoBehaviour
         HandleAttackAnim();
         if (m_Input.AttackInput)
         {
-            Debug.Log(Time.time > m_NextAttackTime);
             if (Time.time > m_NextAttackTime)
             {
                 Attack();
@@ -161,6 +160,7 @@ public class PlayerController : MonoBehaviour
         if (m_IsRolling)
         {
             m_RigidBody.AddForce(transform.forward * m_RollingForce, ForceMode.VelocityChange);
+            m_CurrentSpeed = 0;
         }
 
         m_MoveDirection = m_Forward * m_CurrentSpeed;
