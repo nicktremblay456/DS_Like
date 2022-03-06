@@ -262,10 +262,8 @@ public class PlayerController : MonoBehaviour
     private void ResetSpeed ()
     {
         m_CurrentSpeed = 0f;
-        if (m_IsRunning)
-            m_IsRunning = false;
-        if (m_IsSprinting)
-            m_IsSprinting = false;
+        if (m_IsRunning) m_IsRunning = false;
+        if (m_IsSprinting) m_IsSprinting = false;
     }
 
     public void Death ()
@@ -283,18 +281,15 @@ public class PlayerController : MonoBehaviour
     #region Combat Methods
     private void HandleAttackAnim()
     {
-        if (IsAttackAnim("Attack_1"))
-            m_Animator.SetBool(m_HashAttackOne, false);
-        if (IsAttackAnim("Attack_2"))
-            m_Animator.SetBool(m_HashAttackTwo, false);
+        if (IsAttackAnim("Attack_1")) m_Animator.SetBool(m_HashAttackOne, false);
+        if (IsAttackAnim("Attack_2")) m_Animator.SetBool(m_HashAttackTwo, false);
         if (IsAttackAnim("Attack_3"))
         {
             m_Animator.SetBool(m_HashAttackThree, false);
             m_NbrOfClicks = 0;
         }
 
-        if (Time.time - m_LastClickedTime > m_MaxComboDelay)
-            m_NbrOfClicks = 0;
+        if (Time.time - m_LastClickedTime > m_MaxComboDelay) m_NbrOfClicks = 0;
     }
 
     private bool IsAttackAnim(string a_Name)
@@ -307,8 +302,7 @@ public class PlayerController : MonoBehaviour
     {
         m_LastClickedTime = Time.time;
         m_NbrOfClicks++;
-        if (m_NbrOfClicks == 1)
-            m_Animator.SetBool(m_HashAttackOne, true); ;
+        if (m_NbrOfClicks == 1) m_Animator.SetBool(m_HashAttackOne, true); ;
         m_NbrOfClicks = Mathf.Clamp(m_NbrOfClicks, 0, 3);
 
         if (m_NbrOfClicks >= 2 && IsAttackAnim("Attack_1"))
