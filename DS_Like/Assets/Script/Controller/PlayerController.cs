@@ -7,11 +7,13 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
+    #region Variables/Props
     [SerializeField] private float m_AttackTreshold = 5.0f;
     [SerializeField] private float m_SpherecastRadius = 5.0f;
 
     [Space, Header("Player Settings")]
     [SerializeField] private float m_RunSpeed = 10f;
+    [SerializeField] private float m_SprintSpeed = 15f;
     [SerializeField] private float m_RunAcceleration = 5f;
     [SerializeField] private float m_TurnSpeed = 10f;
     [SerializeField] private float m_JumpForce = 650f;
@@ -46,6 +48,7 @@ public class PlayerController : MonoBehaviour
     private RaycastHit m_HitInfo;
     private Vector3 m_MoveDirection = new Vector3();
 
+    private bool m_IsSprinting = false;
     private bool m_IsRunning = false;
     //private bool m_IsWalkable = true;
     private bool m_IsRolling = false;
@@ -77,6 +80,7 @@ public class PlayerController : MonoBehaviour
     private readonly int m_HashAttackThree = Animator.StringToHash("Attack_3");
     private readonly int m_HashDeath = Animator.StringToHash("Death");
     private readonly int m_HashRoll = Animator.StringToHash("Roll");
+    #endregion
 
     #region Mono Methods
     private void Reset() 
@@ -131,10 +135,13 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && !m_IsRolling && isGrounded)
+        if (m_Input.RollInput)
         {
-            m_IsRolling = true;
-            m_Animator.SetTrigger(m_HashRoll);
+            if (!m_IsRolling && isGrounded)
+            {
+                m_IsRolling = true;
+                m_Animator.SetTrigger(m_HashRoll);
+            }
         }
 
         HandleMovementAnimation();
@@ -152,10 +159,7 @@ public class PlayerController : MonoBehaviour
             Rotate();
             SetSpeed();
         }
-        else
-        {
-            ResetSpeed();
-        }
+        else ResetSpeed();
 
         if (m_IsRolling)
         {
@@ -200,10 +204,7 @@ public class PlayerController : MonoBehaviour
             // Retourne le vector "Forward" en considérant la "pente".
             m_Forward = Vector3.Cross(m_HitInfo.normal, -transform.right);
         }
-        else
-        {
-            m_Forward = transform.forward;
-        }
+        else m_Forward = transform.forward;
     }
 
     private void CalculateGroundAngle ()
@@ -215,10 +216,7 @@ public class PlayerController : MonoBehaviour
             // On détermine l'angle du sol en utilisant la normal et notre forward.            
             m_GroundAngle = Vector3.Angle(m_HitInfo.normal, transform.forward);
         }
-        else
-        {
-            m_GroundAngle = 90f;
-        }
+        else  m_GroundAngle = 90f;
     }
 
     private void Rotate ()
@@ -233,36 +231,41 @@ public class PlayerController : MonoBehaviour
     {
         if (m_GroundAngle < m_MaxGroundAngle + 90f)
         {
-            if (m_CurrentSpeed < m_RunSpeed)
+            if (m_Input.SprintInput)
             {
-                m_CurrentSpeed += m_RunSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
-                if (!m_IsRunning)
+                if (m_CurrentSpeed < m_SprintSpeed)
                 {
-                    m_IsRunning = true;
+                    m_CurrentSpeed += m_SprintSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
+                    if (!m_IsSprinting)
+                        m_IsSprinting = true;
+                }
+            }
+            else
+            {
+                if (m_CurrentSpeed < m_RunSpeed)
+                {
+                    m_CurrentSpeed += m_RunSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
+                    if (!m_IsRunning)
+                        m_IsRunning = true;
                 }
             }
         }
-        else
-        {
-            ResetSpeed();
-        }
+        else ResetSpeed();
     }
 
     private void Jump ()
     {
         if (isGrounded && !m_IsRolling)
-        {
             m_RigidBody.AddForce(transform.up * m_JumpForce);
-        }
     }
 
     private void ResetSpeed ()
     {
         m_CurrentSpeed = 0f;
         if (m_IsRunning)
-        {
             m_IsRunning = false;
-        }
+        if (m_IsSprinting)
+            m_IsSprinting = false;
     }
 
     public void Death ()

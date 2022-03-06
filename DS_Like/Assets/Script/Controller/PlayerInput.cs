@@ -13,12 +13,14 @@ public class PlayerInput : MonoBehaviour
     [HideInInspector]
     public bool PlayerControllerInputBlocked;
 
-    protected Vector2 m_Movement;
-    protected Vector2 m_Camera;
-    protected bool m_Jump;
-    protected bool m_Attack;
-    protected bool m_Pause;
-    protected bool m_ExternalInputBlocked;
+    private Vector2 m_Movement;
+    private Vector2 m_Camera;
+    private bool m_Sprint;
+    private bool m_Jump;
+    private bool m_Attack;
+    private bool m_Roll;
+    private bool m_Pause;
+    private bool m_ExternalInputBlocked;
 
     public Vector2 MoveInput
     {
@@ -44,26 +46,11 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    public bool JumpInput
-    {
-        get
-        {
-            return m_Jump && !PlayerControllerInputBlocked && !m_ExternalInputBlocked;
-        }
-    }
-
-    public bool AttackInput
-    {
-        get
-        {
-            return m_Attack && !PlayerControllerInputBlocked && !m_ExternalInputBlocked;
-        }
-    }
-
-    public bool PauseInput
-    {
-        get { return m_Pause; }
-    }
+    public bool SprintInput { get => m_Sprint && !PlayerControllerInputBlocked && !m_ExternalInputBlocked; }
+    public bool JumpInput { get => m_Jump && !PlayerControllerInputBlocked && !m_ExternalInputBlocked; }
+    public bool RollInput { get => m_Roll && !PlayerControllerInputBlocked && !m_ExternalInputBlocked; }
+    public bool AttackInput { get => m_Attack && !PlayerControllerInputBlocked && !m_ExternalInputBlocked; }
+    public bool PauseInput { get => m_Pause; }
 
     private void Awake() 
     {
@@ -86,7 +73,9 @@ public class PlayerInput : MonoBehaviour
     {
         m_Movement.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         m_Camera.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        m_Sprint = Input.GetButton("Sprint");
         m_Jump = Input.GetButtonDown("Jump");
+        m_Roll = Input.GetButtonDown("Roll");
         m_Attack = Input.GetButtonDown("Fire1");
 
         m_Pause = Input.GetButtonDown("Pause");
