@@ -5,7 +5,10 @@ using UnityEngine.UI;
 public class HealthBar : MonoBehaviour
 {
     private Health m_Health;
-    private Image m_HealthImage;
+
+    private void Awake()
+    {
+    }
 
     public void SetUp(Health a_Health)
     {

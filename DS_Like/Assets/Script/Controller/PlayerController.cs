@@ -40,13 +40,11 @@ public class PlayerController : MonoBehaviour
     private float m_GroundAngle;
 
     private Quaternion m_TargetRotation = new Quaternion();
-    private Transform m_Camera;
-    private Transform m_Follow;
-    private Transform m_LookAt;
-
     private Vector3 m_Forward = new Vector3();
-    private RaycastHit m_HitInfo;
     private Vector3 m_MoveDirection = new Vector3();
+    private Transform m_Camera;
+
+    private RaycastHit m_HitInfo;
 
     private bool m_IsSprinting = false;
     private bool m_IsRunning = false;
@@ -78,25 +76,12 @@ public class PlayerController : MonoBehaviour
     private readonly int m_HashAttackOne = Animator.StringToHash("Attack_1");
     private readonly int m_HashAttackTwo = Animator.StringToHash("Attack_2");
     private readonly int m_HashAttackThree = Animator.StringToHash("Attack_3");
+    private readonly int m_HashJumpAttack = Animator.StringToHash("JumpAttack");
     private readonly int m_HashDeath = Animator.StringToHash("Death");
     private readonly int m_HashRoll = Animator.StringToHash("Roll");
     #endregion
 
     #region Mono Methods
-    private void Reset() 
-    {
-        //Transform footStepSource = transform.Find("FootStepSource");
-
-        if (m_Follow == null)
-        {
-            m_Follow = transform;
-        }
-        if (m_LookAt == null)
-        {
-            m_LookAt = m_Follow.Find("HeadTarget");
-        }
-    }
-
     private void OnEnable() 
     {
         Cursor.visible = false;
@@ -126,7 +111,8 @@ public class PlayerController : MonoBehaviour
         {
             if (Time.time > m_NextAttackTime)
             {
-                Attack();
+                if (!isGrounded) m_Animator.SetTrigger(m_HashJumpAttack);
+                else Attack();
             }
         }
 

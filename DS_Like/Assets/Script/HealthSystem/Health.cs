@@ -7,7 +7,7 @@ public class Health
     private int m_CurrentHealth;
 
     public int CurrentHealth { get => m_CurrentHealth; }
-    private int MaxHealth { get => m_MaxHealth; }
+    public int MaxHealth { get => m_MaxHealth; }
     public float GetHealthPercent { get => m_CurrentHealth / MaxHealth; }
 
     public Health(int a_MaxHealth)
