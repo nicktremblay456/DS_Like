@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour
         CalculateForward();
         CalculateGroundAngle();
         HandleAttackAnim();
-        if (m_Input.AttackInput)
+        if (m_Input.AttackInput && !m_IsRunning && ! m_IsSprinting && !m_IsRolling)
         {
             if (Time.time > m_NextAttackTime)
             {

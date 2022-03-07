@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    [SerializeField] private GameObject m_Door;
     [SerializeField] private LayerMask m_TriggerLayer;
 
     private Animator m_Animator;
