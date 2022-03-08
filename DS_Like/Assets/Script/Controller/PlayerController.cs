@@ -30,6 +30,11 @@ public class PlayerController : MonoBehaviour
     private float m_LastClickedTime = 0;
     private float m_MaxComboDelay = 1;
 
+    private float m_ResetSprintDelay;
+    private float m_SprintStamDelay = 0.5f;
+    private const int SPRINT_STAM_COST = 2;
+    private const int ROLL_STAM_COST = 15;
+
     private PlayerInput m_Input;
     private HealthBars m_HealthBars;
     private Rigidbody m_RigidBody;
@@ -110,7 +115,7 @@ public class PlayerController : MonoBehaviour
         CalculateGroundAngle();
         ControlMaterialPhysics();
         HandleAttackAnim();
-        if (m_Input.AttackInput && !m_IsRunning && ! m_IsSprinting && !m_IsRolling)
+        if (m_Input.AttackInput && !m_IsRunning && !m_IsSprinting && !m_IsRolling)
         {
             if (Time.time > m_NextAttackTime)
             {
@@ -132,7 +137,7 @@ public class PlayerController : MonoBehaviour
                 {
                     m_IsRolling = true;
                     m_Animator.SetTrigger(m_HashRoll);
-                    m_HealthBars.UseStamina(15);
+                    m_HealthBars.UseStamina(ROLL_STAM_COST);
                 }
             }
         }
@@ -151,6 +156,15 @@ public class PlayerController : MonoBehaviour
         {
             Rotate();
             SetSpeed();
+            if (m_IsSprinting)
+            {
+                m_SprintStamDelay -= Time.deltaTime;
+                if (m_SprintStamDelay <= 0f)
+                {
+                    m_HealthBars.UseStamina(SPRINT_STAM_COST);
+                    m_SprintStamDelay = m_ResetSprintDelay;
+                }
+            }
         }
         else ResetSpeed();
 
@@ -199,6 +213,8 @@ public class PlayerController : MonoBehaviour
         m_SlippyPhysics.staticFriction = 0f;
         m_SlippyPhysics.dynamicFriction = 0f;
         m_SlippyPhysics.frictionCombine = PhysicMaterialCombine.Minimum;
+
+        m_ResetSprintDelay = m_SprintStamDelay;
     }
 
     private void ControlMaterialPhysics()
@@ -262,13 +278,12 @@ public class PlayerController : MonoBehaviour
     {
         if (m_GroundAngle < m_MaxGroundAngle + 90f)
         {
-            if (m_Input.SprintInput)
+            if (m_Input.SprintInput && m_HealthBars.Health.CurrentStamina >= SPRINT_STAM_COST)
             {
-                if (m_CurrentSpeed < m_SprintSpeed)
+                if (m_CurrentSpeed < m_SprintSpeed && m_HealthBars.Health.CurrentStamina >= 1)
                 {
                     m_CurrentSpeed += m_SprintSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
-                    if (!m_IsSprinting)
-                        m_IsSprinting = true;
+                    if (!m_IsSprinting) m_IsSprinting = true;
                 }
             }
             else
@@ -276,8 +291,7 @@ public class PlayerController : MonoBehaviour
                 if (m_CurrentSpeed < m_RunSpeed)
                 {
                     m_CurrentSpeed += m_RunSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
-                    if (!m_IsRunning)
-                        m_IsRunning = true;
+                    if (!m_IsRunning) m_IsRunning = true;
                 }
             }
         }
@@ -287,7 +301,14 @@ public class PlayerController : MonoBehaviour
     private void Jump ()
     {
         if (isGrounded && !m_IsRolling)
+        {
+            if (m_IsSprinting)
+            {
+                m_IsSprinting = false;
+                m_CurrentSpeed = m_RunSpeed;
+            }
             m_RigidBody.AddForce(transform.up * m_JumpForce);
+        }
     }
 
     private void ResetSpeed ()
