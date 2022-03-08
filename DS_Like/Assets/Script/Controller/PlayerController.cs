@@ -31,9 +31,12 @@ public class PlayerController : MonoBehaviour
     private float m_MaxComboDelay = 1;
 
     private PlayerInput m_Input;
+    private HealthBars m_HealthBars;
     private Rigidbody m_RigidBody;
     private Animator m_Animator;
     private CapsuleCollider m_Collider;
+
+    private PhysicMaterial m_FrictionPhysics, m_MaxFrictionPhysics, m_SlippyPhysics;
 
     private float m_CurrentSpeed = 0f;
     private float m_RotationAngle;
@@ -90,22 +93,22 @@ public class PlayerController : MonoBehaviour
 
     private void Awake ()
     {
-        m_RigidBody = GetComponent<Rigidbody>();
-        m_Animator = GetComponent<Animator>();
-        m_Collider = GetComponent<CapsuleCollider>();
-        m_Input = GetComponent<PlayerInput>();
+        Init();
     }
 
     private void Start ()
     {
         m_Camera = Camera.main.transform;
+        m_HealthBars = HealthBars.Instance;
     }
 
     private void Update ()
     {
+
         CalculateDirection();
         CalculateForward();
         CalculateGroundAngle();
+        ControlMaterialPhysics();
         HandleAttackAnim();
         if (m_Input.AttackInput && !m_IsRunning && ! m_IsSprinting && !m_IsRolling)
         {
@@ -125,8 +128,12 @@ public class PlayerController : MonoBehaviour
         {
             if (!m_IsRolling && isGrounded)
             {
-                m_IsRolling = true;
-                m_Animator.SetTrigger(m_HashRoll);
+                if (m_HealthBars.Health.CurrentStamina >= 15)
+                {
+                    m_IsRolling = true;
+                    m_Animator.SetTrigger(m_HashRoll);
+                    m_HealthBars.UseStamina(15);
+                }
             }
         }
 
@@ -165,6 +172,44 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Controller Movement
+    private void Init()
+    {
+        m_RigidBody = GetComponent<Rigidbody>();
+        m_Animator = GetComponent<Animator>();
+        m_Collider = GetComponent<CapsuleCollider>();
+        m_Input = GetComponent<PlayerInput>();
+
+        // Slides the character through walls and edges
+        m_FrictionPhysics = new PhysicMaterial();
+        m_FrictionPhysics.name = "frictionPhysics";
+        m_FrictionPhysics.staticFriction = 0.25f;
+        m_FrictionPhysics.dynamicFriction = 0.25f;
+        m_FrictionPhysics.frictionCombine = PhysicMaterialCombine.Multiply;
+
+        // Prevent the collider from slipping on ramps
+        m_MaxFrictionPhysics = new PhysicMaterial();
+        m_MaxFrictionPhysics.name = "maxFrictionPhysics";
+        m_MaxFrictionPhysics.staticFriction = 1f;
+        m_MaxFrictionPhysics.dynamicFriction = 1f;
+        m_MaxFrictionPhysics.frictionCombine = PhysicMaterialCombine.Maximum;
+
+        // Air physics
+        m_SlippyPhysics = new PhysicMaterial();
+        m_SlippyPhysics.name = "slippyPhysics";
+        m_SlippyPhysics.staticFriction = 0f;
+        m_SlippyPhysics.dynamicFriction = 0f;
+        m_SlippyPhysics.frictionCombine = PhysicMaterialCombine.Minimum;
+    }
+
+    private void ControlMaterialPhysics()
+    {
+        m_Collider.material = (isGrounded && m_GroundAngle < m_MaxGroundAngle) ? m_FrictionPhysics : m_SlippyPhysics;
+
+        if (isGrounded && m_Input.MoveInput == Vector2.zero) m_Collider.material = m_MaxFrictionPhysics;
+        else if (isGrounded && m_Input.MoveInput != Vector2.zero) m_Collider.material = m_FrictionPhysics;
+        else m_Collider.material = m_SlippyPhysics;
+    }
+
     private void HandleMovementAnimation()
     {
         m_Animator.SetFloat(m_HashVelocityY, m_RigidBody.velocity.y);
