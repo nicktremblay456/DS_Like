@@ -10,6 +10,8 @@ public abstract class BaseEnemy : MonoBehaviour
     [SerializeField] protected int m_MaxHealth;
     [SerializeField] protected float m_ChaseThreshold;
     [SerializeField] protected float m_AttackThreshold;
+    [Space]
+    [SerializeField] protected float m_DespawnTimer = 2.5f;
 
     [SerializeField] protected UnityEvent m_OnDeathEvent;
 

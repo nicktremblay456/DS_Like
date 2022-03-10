@@ -8,10 +8,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     #region Variables/Props
-    [SerializeField] private float m_AttackTreshold = 5.0f;
-    [SerializeField] private float m_SpherecastRadius = 5.0f;
-
-    [Space, Header("Player Settings")]
+    [Header("Player Settings")]
     [SerializeField] private float m_RunSpeed = 10f;
     [SerializeField] private float m_SprintSpeed = 15f;
     [SerializeField] private float m_RunAcceleration = 5f;
@@ -24,8 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask m_WalkGround;
 
     [Space, Header("Combat Settings")]
+    [SerializeField] private HealthBars m_HealthBars;
     [SerializeField] private MeleeWeapon m_Weapon;
-    [SerializeField] private float m_AtkCooldownTime = 2f;
     private float m_NextAttackTime = 0f;
     private int m_NbrOfClicks = 0;
     private float m_LastClickedTime = 0;
@@ -37,7 +34,6 @@ public class PlayerController : MonoBehaviour
     private const int ROLL_STAM_COST = 15;
 
     private PlayerInput m_Input;
-    [SerializeField] private HealthBars m_HealthBars;
     private Rigidbody m_RigidBody;
     private Animator m_Animator;
     private CapsuleCollider m_Collider;

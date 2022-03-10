@@ -23,6 +23,7 @@ public class BossHealthBar : MonoBehaviour
 
     public void SetBossHealth(string name, int maxHealth)
     {
+        gameObject.SetActive(true);
         m_BossNameText.text = name;
         m_Health = new Health(maxHealth, 0);
         m_Health.OnHealthChanged += Health_OnHealthChanged;
