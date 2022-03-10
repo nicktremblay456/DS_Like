@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask m_WalkGround;
 
     [Space, Header("Combat Settings")]
+    [SerializeField] private MeleeWeapon m_Weapon;
     [SerializeField] private float m_AtkCooldownTime = 2f;
     private float m_NextAttackTime = 0f;
     private int m_NbrOfClicks = 0;
@@ -36,7 +37,7 @@ public class PlayerController : MonoBehaviour
     private const int ROLL_STAM_COST = 15;
 
     private PlayerInput m_Input;
-    private HealthBars m_HealthBars;
+    [SerializeField] private HealthBars m_HealthBars;
     private Rigidbody m_RigidBody;
     private Animator m_Animator;
     private CapsuleCollider m_Collider;
@@ -105,7 +106,7 @@ public class PlayerController : MonoBehaviour
     private void Start ()
     {
         m_Camera = Camera.main.transform;
-        m_HealthBars = HealthBars.Instance;
+        //m_HealthBars = HealthBars.Instance;
     }
 
     private void Update ()
@@ -119,8 +120,7 @@ public class PlayerController : MonoBehaviour
         {
             if (Time.time > m_NextAttackTime)
             {
-                if (!isGrounded) m_Animator.SetTrigger(m_HashJumpAttack);
-                else Attack();
+                Attack();
             }
         }
 
@@ -352,7 +352,6 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
-        if (!m_IsAttacking) m_IsAttacking = true;
         m_LastClickedTime = Time.time;
         m_NbrOfClicks++;
         if (m_NbrOfClicks == 1) m_Animator.SetBool(m_HashAttackOne, true); ;
@@ -370,10 +369,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnAttackStart()
+    {
+        m_IsAttacking = true;
+        m_Weapon.ActivateWeaponCollider();
+    }
+
     public void OnAttackEnd()
     {
-        Debug.Log("End Attack");
         m_IsAttacking = false;
+        m_Weapon.DeactivateWeaponCollider();
     }
     #endregion
 }

@@ -11,6 +11,7 @@ public class MeleeWeapon : MonoBehaviour
     private void Awake()
     {
         m_Collider = GetComponent<Collider>();
+        m_Collider.isTrigger = true;
         m_Collider.enabled = false;
     }
 
@@ -18,8 +19,10 @@ public class MeleeWeapon : MonoBehaviour
     {
         if (0 != (m_DamageableLayer.value & 1 << other.gameObject.layer))
         {
+            IDamageable damageable = other.GetComponentInParent<IDamageable>();
             m_Collider.enabled = false;
             // Do damage
+            if (damageable != null) damageable.TakeDamage(m_Damage);
         }
     }
 
