@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
 
     private RaycastHit m_HitInfo;
 
+    private bool m_IsAttacking = false;
     private bool m_IsSprinting = false;
     private bool m_IsRunning = false;
     //private bool m_IsWalkable = true;
@@ -109,7 +110,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update ()
     {
-
         CalculateDirection();
         CalculateForward();
         CalculateGroundAngle();
@@ -131,15 +131,7 @@ public class PlayerController : MonoBehaviour
 
         if (m_Input.RollInput)
         {
-            if (!m_IsRolling && isGrounded)
-            {
-                if (m_HealthBars.Health.CurrentStamina >= 15)
-                {
-                    m_IsRolling = true;
-                    m_Animator.SetTrigger(m_HashRoll);
-                    m_HealthBars.UseStamina(ROLL_STAM_COST);
-                }
-            }
+            Roll();
         }
 
         HandleMovementAnimation();
@@ -152,7 +144,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate ()
     {
         // Physics
-        if (m_Input.MoveInput != Vector2.zero)
+        if (m_Input.MoveInput != Vector2.zero && !m_IsAttacking)
         {
             Rotate();
             SetSpeed();
@@ -280,7 +272,7 @@ public class PlayerController : MonoBehaviour
         {
             if (m_Input.SprintInput && m_HealthBars.Health.CurrentStamina >= SPRINT_STAM_COST)
             {
-                if (m_CurrentSpeed < m_SprintSpeed && m_HealthBars.Health.CurrentStamina >= 1)
+                if (m_CurrentSpeed < m_SprintSpeed)
                 {
                     m_CurrentSpeed += m_SprintSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
                     if (!m_IsSprinting) m_IsSprinting = true;
@@ -302,12 +294,20 @@ public class PlayerController : MonoBehaviour
     {
         if (isGrounded && !m_IsRolling)
         {
-            if (m_IsSprinting)
-            {
-                m_IsSprinting = false;
-                m_CurrentSpeed = m_RunSpeed;
-            }
             m_RigidBody.AddForce(transform.up * m_JumpForce);
+        }
+    }
+
+    private void Roll()
+    {
+        if (!m_IsRolling && isGrounded && !m_IsAttacking)
+        {
+            if (m_HealthBars.Health.CurrentStamina >= ROLL_STAM_COST)
+            {
+                m_IsRolling = true;
+                m_Animator.SetTrigger(m_HashRoll);
+                m_HealthBars.UseStamina(ROLL_STAM_COST);
+            }
         }
     }
 
@@ -352,6 +352,7 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
+        if (!m_IsAttacking) m_IsAttacking = true;
         m_LastClickedTime = Time.time;
         m_NbrOfClicks++;
         if (m_NbrOfClicks == 1) m_Animator.SetBool(m_HashAttackOne, true); ;
@@ -367,6 +368,12 @@ public class PlayerController : MonoBehaviour
             m_Animator.SetBool(m_HashAttackTwo, false);
             m_Animator.SetBool(m_HashAttackThree, true);
         }
+    }
+
+    public void OnAttackEnd()
+    {
+        Debug.Log("End Attack");
+        m_IsAttacking = false;
     }
     #endregion
 }

@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637821908062884440
-    m_Hash: 2548997577
+      ticks: 637824391332180895
+    m_Hash: 3124523920
   m_LockFileStatus:
     m_FilePath: C:/Users/Nick_/OneDrive/Bureau/Unity/DS_Like/DS_Like/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637821908062986232
-    m_Hash: 495064904
+      ticks: 637824391332181964
+    m_Hash: 1394046524
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
@@ -897,11 +897,13 @@ m_PackageAssets:
         - 3.0.6
         - 3.2.0-pre.1
         - 3.2.0-pre.2
+        - 3.2.0-pre.3
         - 4.0.0-pre.1
         compatible:
         - 3.0.6
         - 3.2.0-pre.1
         - 3.2.0-pre.2
+        - 3.2.0-pre.3
         verified: 3.0.6
       dependencies:
       - name: com.unity.ugui
