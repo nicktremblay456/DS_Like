@@ -8,6 +8,8 @@ public class MeleeWeapon : MonoBehaviour
     [SerializeField] private LayerMask m_DamageableLayer;
     private Collider m_Collider;
 
+    public Collider Collider { get => m_Collider; }
+
     private void Awake()
     {
         m_Collider = GetComponent<Collider>();

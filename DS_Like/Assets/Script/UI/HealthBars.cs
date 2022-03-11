@@ -43,7 +43,7 @@ public class HealthBars : MonoBehaviour
 
     private IEnumerator RegenStamina()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3.5f);
         while (m_Health.CurrentStamina < m_Health.MaxStamina)
         {
             m_Health.RegenStamina(m_Health.MaxStamina / 100);

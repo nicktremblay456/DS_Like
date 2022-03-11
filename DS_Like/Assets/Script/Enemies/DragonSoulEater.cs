@@ -101,6 +101,7 @@ public class DragonSoulEater : BaseEnemy, IDamageable
     {
         m_AttackTimer = m_ResetAttackTimer;
         m_Animator.ResetTrigger(m_HashAttack);
+        DeactivateDamageTrigger();
     }
 
     public override void OnDeathEnter()
@@ -118,6 +119,7 @@ public class DragonSoulEater : BaseEnemy, IDamageable
             {
                 m_HealthBar.gameObject.SetActive(false);
                 m_IsDeath = true;
+                DeactivateDamageTrigger();
                 enabled = false;
             }
         }
@@ -127,11 +129,17 @@ public class DragonSoulEater : BaseEnemy, IDamageable
     #region Combat
     private void Attack()
     {
-        int rand = Random.Range(1, 4);
+        int rand = Random.Range(1, 3);// Change 3 for 4 when fireball will be added 
         transform.LookAt(m_Target.transform);
         m_Animator.SetInteger(m_HashRandom, rand);
         m_Animator.SetTrigger(m_HashAttack);
         m_AttackTimer = m_ResetAttackTimer;
+    }
+
+    private void DeactivateDamageTrigger()
+    {
+        if (m_Tail.Collider.enabled) m_Tail.Collider.enabled = false;
+        if (m_Jaw.Collider.enabled) m_Jaw.Collider.enabled = false;
     }
 
     public void OnTailAttackStart()
