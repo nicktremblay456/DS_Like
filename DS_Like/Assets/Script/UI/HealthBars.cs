@@ -56,10 +56,6 @@ public class HealthBars : MonoBehaviour
     public void TakeDamage(int a_Damage)
     {
         m_Health.TakeDamage(a_Damage);
-        if (m_Health.CurrentHealth <= 0f)
-        {
-            // dead
-        }
     }
 
     public void UseStamina(int a_Stamina)

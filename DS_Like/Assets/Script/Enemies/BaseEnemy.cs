@@ -64,6 +64,8 @@ public abstract class BaseEnemy : MonoBehaviour
         m_SM.OnUpdate((int)State.Attack, OnAttackUpdate);
         m_SM.OnUpdate((int)State.Death, OnDeathUpdate);
 
+        m_SM.OnExit((int)State.Attack, OnAttackExit);
+
         m_SM.Init((int)State.Idle);
     }
 
@@ -94,6 +96,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
     public abstract void OnAttackEnter();
     public abstract void OnAttackUpdate();
+    public abstract void OnAttackExit();
 
     public abstract void OnDeathEnter();
     public abstract void OnDeathUpdate();

@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class DragonSoulEater : BaseEnemy, IDamageable
 {
-    private float m_AttackTimer = 5f;
+    [SerializeField] private MeleeWeapon m_Tail;
+    [SerializeField] private MeleeWeapon m_Jaw;
+
+    private float m_AttackTimer = 3.5f;
     private float m_ResetAttackTimer;
 
     private BossHealthBar m_HealthBar;
@@ -30,7 +33,7 @@ public class DragonSoulEater : BaseEnemy, IDamageable
         }
     }
 
-    // Interface methods
+    // IDamageable methods
     public void TakeDamage(int damageAmount)
     {
         m_HealthBar.Health.TakeDamage(damageAmount);
@@ -40,6 +43,7 @@ public class DragonSoulEater : BaseEnemy, IDamageable
         }
     }
 
+    #region States
     public override void OnIdleEnter()
     {
         m_Animator.SetBool(m_HashRun, false);
@@ -48,7 +52,7 @@ public class DragonSoulEater : BaseEnemy, IDamageable
 
     public override void OnIdleUpdate()
     {
-        if (IsTargetInRange(m_ChaseThreshold))
+        if (IsTargetInRange(m_ChaseThreshold) && !m_Target.IsDead)
             ChangeState(State.Chase);
     }
 
@@ -74,6 +78,7 @@ public class DragonSoulEater : BaseEnemy, IDamageable
     {
         m_Animator.SetBool(m_HashRun, false);
         StopMovement();
+        Attack();
     }
 
     public override void OnAttackUpdate()
@@ -83,16 +88,19 @@ public class DragonSoulEater : BaseEnemy, IDamageable
             m_Animator.ResetTrigger(m_HashAttack);
             ChangeState(State.Chase);
         }
+        if (m_Target.IsDead) ChangeState(State.Idle);
 
         m_AttackTimer -= Time.deltaTime;
         if (m_AttackTimer <= 0f)
         {
-            int rand = Random.Range(1, 4);
-            transform.LookAt(m_Target.transform);
-            m_Animator.SetInteger(m_HashRandom, rand);
-            m_Animator.SetTrigger(m_HashAttack);
-            m_AttackTimer = m_ResetAttackTimer;
+            Attack();
         }
+    }
+
+    public override void OnAttackExit()
+    {
+        m_AttackTimer = m_ResetAttackTimer;
+        m_Animator.ResetTrigger(m_HashAttack);
     }
 
     public override void OnDeathEnter()
@@ -114,4 +122,36 @@ public class DragonSoulEater : BaseEnemy, IDamageable
             }
         }
     }
+    #endregion
+
+    #region Combat
+    private void Attack()
+    {
+        int rand = Random.Range(1, 4);
+        transform.LookAt(m_Target.transform);
+        m_Animator.SetInteger(m_HashRandom, rand);
+        m_Animator.SetTrigger(m_HashAttack);
+        m_AttackTimer = m_ResetAttackTimer;
+    }
+
+    public void OnTailAttackStart()
+    {
+        m_Tail.ActivateWeaponCollider();
+    }
+
+    public void OnTailAttackEnd()
+    {
+        m_Tail.DeactivateWeaponCollider();
+    }
+
+    public void OnBiteAttackStart()
+    {
+        m_Jaw.ActivateWeaponCollider();
+    }
+
+    public void OnBiteAttackEnd()
+    {
+        m_Jaw.DeactivateWeaponCollider();
+    }
+    #endregion
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class PlayerInput : MonoBehaviour
 
     [HideInInspector]
     public bool PlayerControllerInputBlocked;
+
+    private CinemachineBrain m_CamBrain;
 
     private Vector2 m_Movement;
     private Vector2 m_Camera;
@@ -67,6 +70,8 @@ public class PlayerInput : MonoBehaviour
 
     private void Start() 
     {
+        Camera cam = Camera.main;
+        m_CamBrain = cam.GetComponent<CinemachineBrain>();
     }
 
     private void Update() 
@@ -88,11 +93,13 @@ public class PlayerInput : MonoBehaviour
 
     public void ReleaseControl()
     {
+        m_CamBrain.enabled = false;
         m_ExternalInputBlocked = true;
     }
 
     public void GainControl()
     {
+        m_CamBrain.enabled = true;
         m_ExternalInputBlocked = false;
     }
 }

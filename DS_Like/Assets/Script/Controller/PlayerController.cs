@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Animator))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
     #region Variables/Props
     [Header("Player Settings")]
@@ -56,6 +56,8 @@ public class PlayerController : MonoBehaviour
     private bool m_IsRunning = false;
     //private bool m_IsWalkable = true;
     private bool m_IsRolling = false;
+    private bool m_IsDead = false;
+
     private bool isGrounded
     {
         get
@@ -63,6 +65,7 @@ public class PlayerController : MonoBehaviour
             return Physics.SphereCast(transform.position + m_Collider.center, m_Collider.radius, Vector3.down, out m_HitInfo, m_Collider.height * 0.5f, m_WalkGround, QueryTriggerInteraction.Ignore);
         }
     }
+    public bool IsDead { get => m_IsDead; }
     public float ColliderHeight
     {
         get => m_Collider.height;
@@ -82,7 +85,7 @@ public class PlayerController : MonoBehaviour
     private readonly int m_HashAttackOne = Animator.StringToHash("Attack_1");
     private readonly int m_HashAttackTwo = Animator.StringToHash("Attack_2");
     private readonly int m_HashAttackThree = Animator.StringToHash("Attack_3");
-    private readonly int m_HashJumpAttack = Animator.StringToHash("JumpAttack");
+    //private readonly int m_HashJumpAttack = Animator.StringToHash("JumpAttack");
     private readonly int m_HashDeath = Animator.StringToHash("Death");
     private readonly int m_HashRoll = Animator.StringToHash("Roll");
     #endregion
@@ -377,4 +380,19 @@ public class PlayerController : MonoBehaviour
         m_Weapon.DeactivateWeaponCollider();
     }
     #endregion
+
+    // IDamageable method
+    public void TakeDamage(int damageAmount)
+    {
+        if (m_IsRolling || m_IsDead) return;
+
+        m_HealthBars.TakeDamage(damageAmount);
+        if (m_HealthBars.Health.CurrentHealth <= 0f)
+        {
+            if (m_IsRolling) m_IsRolling = false;
+            m_IsDead = true;
+            m_Animator.SetTrigger(m_HashDeath);
+            m_Input.ReleaseControl();
+        }
+    }
 }
