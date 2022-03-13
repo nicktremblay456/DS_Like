@@ -5,7 +5,8 @@ using UnityEngine.Events;
 using UnityEngine.AI;
 using TNT.StateMachine;
 
-public abstract class BaseEnemy : MonoBehaviour
+[RequireComponent(typeof(NavMeshAgent)), RequireComponent(typeof(Animator))]
+public abstract class BaseEnemy : MonoBehaviour, IDamageable
 {
     [SerializeField] protected int m_MaxHealth;
     [SerializeField] protected float m_ChaseThreshold;
@@ -85,6 +86,13 @@ public abstract class BaseEnemy : MonoBehaviour
     protected bool IsTargetInRange(float threshold)
     {
         return Vector3.Distance(transform.position, m_Target.transform.position) <= threshold;
+    }
+
+    // IDamageable methods
+    public virtual void TakeDamage(int damageAmount)
+    {
+        m_Health.TakeDamage(damageAmount);
+        if (m_Health.CurrentHealth <= 0f) ChangeState(State.Death);
     }
 
     #region Abstract Methods

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonSoulEater : BaseEnemy, IDamageable
+public class DragonSoulEater : BaseEnemy
 {
     [SerializeField] private MeleeWeapon m_Tail;
     [SerializeField] private MeleeWeapon m_Jaw;
@@ -33,14 +33,10 @@ public class DragonSoulEater : BaseEnemy, IDamageable
         }
     }
 
-    // IDamageable methods
-    public void TakeDamage(int damageAmount)
+    public override void TakeDamage(int damageAmount)
     {
         m_HealthBar.Health.TakeDamage(damageAmount);
-        if (m_HealthBar.Health.CurrentHealth <= 0f && !m_IsDeath)
-        {
-            ChangeState(State.Death);
-        }
+        if (m_HealthBar.Health.CurrentHealth <= 0f && !m_IsDeath) ChangeState(State.Death);
     }
 
     #region States
