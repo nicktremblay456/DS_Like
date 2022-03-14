@@ -35,7 +35,7 @@ public class Missile : PoolableObject
 
     protected override void Update()
     {
-        if (m_Collisions > m_MaxCollisions)
+        if (m_Collisions >= m_MaxCollisions)
         {
             Explode();
         }

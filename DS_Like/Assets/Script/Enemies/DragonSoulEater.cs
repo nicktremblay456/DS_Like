@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class DragonSoulEater : BaseEnemy
 {
+    #region Variables/Props
+    [SerializeField] private Transform m_FireballSpawn;
+    [SerializeField] private GameObject m_FireballObj;
+    [SerializeField] private float m_FIreballSpawnForce;
     [SerializeField] private MeleeWeapon m_Tail;
     [SerializeField] private MeleeWeapon m_Jaw;
+    [Space]
+    [SerializeField] private bool m_IsBoss = false;
 
-    private float m_AttackTimer = 3.5f;
+    private Coroutine m_FireballRoutine;
+
+    private float m_AttackTimer = 3f;
     private float m_ResetAttackTimer;
 
     private BossHealthBar m_HealthBar;
@@ -17,6 +25,7 @@ public class DragonSoulEater : BaseEnemy
     private readonly int m_HashAttack = Animator.StringToHash("Attack");
     private readonly int m_HashRandom = Animator.StringToHash("Random");
     private readonly int m_HashDeath = Animator.StringToHash("Death");
+    #endregion
 
     protected override void Awake()
     {
@@ -26,17 +35,22 @@ public class DragonSoulEater : BaseEnemy
 
     private void Start()
     {
-        if (m_HealthBar == null)
+        if (m_IsBoss && m_HealthBar == null)
         {
             m_HealthBar = BossHealthBar.Instance;
-            m_HealthBar.gameObject.SetActive(false);
+            //m_HealthBar.gameObject.SetActive(false);
         }
     }
 
+    // IDamageable
     public override void TakeDamage(int damageAmount, bool ignoreRoll = false)
     {
-        m_HealthBar.Health.TakeDamage(damageAmount);
-        if (m_HealthBar.Health.CurrentHealth <= 0f && !m_IsDeath) ChangeState(State.Death);
+        if (m_IsBoss)
+        {
+            m_HealthBar.Health.TakeDamage(damageAmount);
+            if (m_HealthBar.Health.CurrentHealth <= 0f && !m_IsDeath) ChangeState(State.Death);
+        }
+        else base.TakeDamage(damageAmount, ignoreRoll);
     }
 
     #region States
@@ -54,7 +68,7 @@ public class DragonSoulEater : BaseEnemy
 
     public override void OnChaseEnter()
     {
-        if (!m_IsHealthBarInit)
+        if (m_IsBoss && !m_IsHealthBarInit)
         {
             m_HealthBar.SetBossHealth("Dragon Soul Eater", 500);
             m_IsHealthBarInit = true;
@@ -86,10 +100,13 @@ public class DragonSoulEater : BaseEnemy
         }
         if (m_Target.IsDead) ChangeState(State.Idle);
 
-        m_AttackTimer -= Time.deltaTime;
-        if (m_AttackTimer <= 0f)
+        if (!m_IsDeath)
         {
-            Attack();
+            m_AttackTimer -= Time.deltaTime;
+            if (m_AttackTimer <= 0f)
+            {
+                Attack();
+            }
         }
     }
 
@@ -98,10 +115,18 @@ public class DragonSoulEater : BaseEnemy
         m_AttackTimer = m_ResetAttackTimer;
         m_Animator.ResetTrigger(m_HashAttack);
         DeactivateDamageTrigger();
+
+        if (!m_IsDeath)
+        {
+            // Spawn Fireball
+            m_Animator.SetInteger(m_HashRandom, 3);
+            m_Animator.SetTrigger(m_HashAttack);
+        }
     }
 
     public override void OnDeathEnter()
     {
+        m_Animator.ResetTrigger(m_HashAttack);
         m_Animator.SetTrigger(m_HashDeath);
         if (m_OnDeathEvent != null) m_OnDeathEvent.Invoke();
     }
@@ -125,7 +150,7 @@ public class DragonSoulEater : BaseEnemy
     #region Combat
     private void Attack()
     {
-        int rand = Random.Range(1, 3);// Change 3 for 4 when fireball will be added 
+        int rand = Random.Range(1, 3);
         transform.LookAt(m_Target.transform);
         m_Animator.SetInteger(m_HashRandom, rand);
         m_Animator.SetTrigger(m_HashAttack);
@@ -138,6 +163,35 @@ public class DragonSoulEater : BaseEnemy
         if (m_Jaw.Collider.enabled) m_Jaw.Collider.enabled = false;
     }
 
+    public void SpawnFireball()
+    {
+        if (m_FireballRoutine != null) StopCoroutine(m_FireballRoutine);
+        m_FireballRoutine = StartCoroutine(FireballAttack());
+    }
+
+    private IEnumerator FireballAttack()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            Ray ray = new Ray(m_FireballSpawn.position, m_FireballSpawn.forward);
+            RaycastHit hit;
+
+            Vector3 targetPoint;
+            if (Physics.Raycast(ray, out hit)) targetPoint = hit.point;
+            else targetPoint = ray.GetPoint(75);
+
+            Vector3 directionWithoutSpread = targetPoint - transform.position;
+            transform.LookAt(m_Target.transform);
+            Missile fireball = PoolMgr.Instance.Spawn(m_FireballObj.name, m_FireballSpawn.transform.position, Quaternion.identity).GetComponent<Missile>();
+            fireball.TargetLayer = m_Target.gameObject.layer;
+            fireball.Rigidbody.AddForce(directionWithoutSpread.normalized * m_FIreballSpawnForce, ForceMode.Impulse);
+
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
+    #endregion
+
+    #region Animation Event Methods
     public void OnTailAttackStart()
     {
         m_Tail.ActivateWeaponCollider();

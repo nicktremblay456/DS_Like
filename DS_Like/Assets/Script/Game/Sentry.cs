@@ -61,7 +61,7 @@ public class Sentry : MonoBehaviour
         Vector3 directionWithoutSpread = targetPoint - transform.position;
 
         Missile missile = PoolMgr.Instance.Spawn(m_Missile.name, spawn.position, Quaternion.identity).GetComponent<Missile>();
-        missile.TargetLayer = LayerMask.GetMask("Player");
+        if (missile.TargetLayer != LayerMask.GetMask("Player")) missile.TargetLayer = LayerMask.GetMask("Player");
         missile.transform.forward = directionWithoutSpread.normalized;
 
         missile.Rigidbody.AddForce(directionWithoutSpread.normalized * m_ShootForce, ForceMode.Impulse);

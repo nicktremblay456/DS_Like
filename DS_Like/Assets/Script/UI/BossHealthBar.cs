@@ -19,6 +19,7 @@ public class BossHealthBar : MonoBehaviour
     private void Awake()
     {
         if (m_Instance == null) m_Instance = this;
+        gameObject.SetActive(false);
     }
 
     public void SetBossHealth(string name, int maxHealth)

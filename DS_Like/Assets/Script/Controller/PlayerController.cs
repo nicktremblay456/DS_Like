@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(CapsuleCollider))]
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody)), RequireComponent(typeof(Animator)), RequireComponent(typeof(CapsuleCollider))]
 public class PlayerController : MonoBehaviour, IDamageable
 {
     #region Variables/Props
@@ -60,10 +58,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private bool isGrounded
     {
-        get
-        {
-            return Physics.SphereCast(transform.position + m_Collider.center, m_Collider.radius, Vector3.down, out m_HitInfo, m_Collider.height * 0.5f, m_WalkGround, QueryTriggerInteraction.Ignore);
-        }
+        get => Physics.SphereCast(transform.position + m_Collider.center, m_Collider.radius, Vector3.down, out m_HitInfo, m_Collider.height * 0.5f, m_WalkGround, QueryTriggerInteraction.Ignore);
     }
     public bool IsDead { get => m_IsDead; }
     public float ColliderHeight
