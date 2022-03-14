@@ -33,7 +33,7 @@ public class DragonSoulEater : BaseEnemy
         }
     }
 
-    public override void TakeDamage(int damageAmount)
+    public override void TakeDamage(int damageAmount, bool ignoreRoll = false)
     {
         m_HealthBar.Health.TakeDamage(damageAmount);
         if (m_HealthBar.Health.CurrentHealth <= 0f && !m_IsDeath) ChangeState(State.Death);

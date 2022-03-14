@@ -382,9 +382,12 @@ public class PlayerController : MonoBehaviour, IDamageable
     #endregion
 
     // IDamageable method
-    public void TakeDamage(int damageAmount)
+    public void TakeDamage(int damageAmount, bool ignoreRoll = false)
     {
-        if (m_IsRolling || m_IsDead) return;
+        if (!ignoreRoll || m_IsDead)
+        {
+            if (m_IsRolling || m_IsDead) return;
+        }
 
         m_HealthBars.TakeDamage(damageAmount);
         if (m_HealthBars.Health.CurrentHealth <= 0f)

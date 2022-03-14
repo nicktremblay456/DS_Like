@@ -80,7 +80,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
 
     protected void ChangeState(State state)
     {
-        m_SM.ChangeState((int)state);
+        if (m_SM.CurrentState != (int)state) m_SM.ChangeState((int)state);
     }
 
     protected bool IsTargetInRange(float threshold)
@@ -89,7 +89,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     }
 
     // IDamageable methods
-    public virtual void TakeDamage(int damageAmount)
+    public virtual void TakeDamage(int damageAmount, bool ignoreRoll = false)
     {
         m_Health.TakeDamage(damageAmount);
         if (m_Health.CurrentHealth <= 0f) ChangeState(State.Death);
