@@ -6,6 +6,7 @@ public class Sentry : MonoBehaviour
 {
     [SerializeField] private Transform[] m_Spawns;
     [SerializeField] private GameObject m_Missile;
+    [SerializeField] private GameObject m_FireShardFx;
     [SerializeField] private float m_ShootForce;
     [SerializeField] private float m_AttackTimer;
 
@@ -14,7 +15,8 @@ public class Sentry : MonoBehaviour
 
     private void Awake()
     {
-        m_ResetTimer = m_AttackTimer;    
+        m_ResetTimer = m_AttackTimer;
+        m_FireShardFx.SetActive(false);
     }
 
     private void Update()
@@ -38,6 +40,7 @@ public class Sentry : MonoBehaviour
         if (0 != (LayerMask.GetMask("Player") & 1 << other.gameObject.layer))
         {
             m_IsPlayerInRange = true;
+            m_FireShardFx.SetActive(true);
         }
     }
 
@@ -46,6 +49,7 @@ public class Sentry : MonoBehaviour
         if (0 != (LayerMask.GetMask("Player") & 1 << other.gameObject.layer))
         {
             m_IsPlayerInRange = false;
+            m_FireShardFx.SetActive(false);
         }
     }
 
@@ -65,6 +69,5 @@ public class Sentry : MonoBehaviour
         missile.transform.forward = directionWithoutSpread.normalized;
 
         missile.Rigidbody.AddForce(directionWithoutSpread.normalized * m_ShootForce, ForceMode.Impulse);
-        //missile.Rigidbody.AddForce(spawn.up, ForceMode.Impulse);
     }
 }

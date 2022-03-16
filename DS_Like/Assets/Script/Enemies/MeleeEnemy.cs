@@ -6,19 +6,29 @@ public class MeleeEnemy : BaseEnemy
 {
     [SerializeField] private MeleeWeapon m_Sword;
 
-    private float m_AttackTimer = 2.5f;
+    [SerializeField] private float m_AttackDelay = 2.5f;
     private float m_ResetTimer;
 
+    private Collider m_Collider;
     private bool m_IsAttacking = false;
 
-    private readonly int m_HashWalk = Animator.StringToHash("IsWalking");
+    private readonly int m_HashWalk = Animator.StringToHash("IsRunning");
     private readonly int m_HashAttack = Animator.StringToHash("Attack");
-    private readonly int m_HashDeath = Animator.StringToHash("Death");
+    private readonly int m_HashTakeDmg = Animator.StringToHash("TakeDamage");
+    private readonly int m_HashDead = Animator.StringToHash("IsDead");
 
     protected override void Awake()
     {
         base.Awake();
-        m_ResetTimer = m_AttackTimer;
+        m_Collider = GetComponentInChildren<Collider>();
+        if (m_IsDeath) m_Collider.enabled = false;
+        m_ResetTimer = m_AttackDelay;
+    }
+
+    public override void TakeDamage(int damageAmount, bool ignoreRoll = false)
+    {
+        if (!m_IsDeath) m_Animator.SetTrigger(m_HashTakeDmg);
+        base.TakeDamage(damageAmount, ignoreRoll);
     }
 
     public override void OnIdleEnter()
@@ -61,8 +71,8 @@ public class MeleeEnemy : BaseEnemy
         }
         if (m_Target.IsDead && !m_IsAttacking) ChangeState(State.Idle);
 
-        m_AttackTimer -= Time.deltaTime;
-        if (m_AttackTimer <= 0f)
+        m_AttackDelay -= Time.deltaTime;
+        if (m_AttackDelay <= 0f)
         {
             Attack();
         }
@@ -76,7 +86,7 @@ public class MeleeEnemy : BaseEnemy
 
     public override void OnDeathEnter()
     {
-        m_Animator.SetTrigger(m_HashDeath);
+        m_Animator.SetBool(m_HashDead, true);
         if (m_OnDeathEvent != null) m_OnDeathEvent.Invoke();
     }
 
@@ -98,7 +108,7 @@ public class MeleeEnemy : BaseEnemy
     {
         transform.LookAt(m_Target.transform);
         m_Animator.SetTrigger(m_HashAttack);
-        m_AttackTimer = m_ResetTimer;
+        m_AttackDelay = m_ResetTimer;
     }
 
     public void OnAttackStart()

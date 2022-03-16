@@ -7,7 +7,7 @@ public class DragonSoulEater : BaseEnemy
     #region Variables/Props
     [SerializeField] private Transform m_FireballSpawn;
     [SerializeField] private GameObject m_FireballObj;
-    [SerializeField] private float m_FIreballSpawnForce;
+    [SerializeField] private float m_FireballSpawnForce;
     [SerializeField] private MeleeWeapon m_Tail;
     [SerializeField] private MeleeWeapon m_Jaw;
     [Space]
@@ -21,10 +21,13 @@ public class DragonSoulEater : BaseEnemy
     private BossHealthBar m_HealthBar;
     private bool m_IsHealthBarInit = false;
 
+    private bool m_IsCasting = false;
+    private bool m_IsAttacking = false;
+
     private readonly int m_HashRun = Animator.StringToHash("IsRunning");
     private readonly int m_HashAttack = Animator.StringToHash("Attack");
     private readonly int m_HashRandom = Animator.StringToHash("Random");
-    private readonly int m_HashDeath = Animator.StringToHash("Death");
+    private readonly int m_HashDead = Animator.StringToHash("IsDead");
     #endregion
 
     protected override void Awake()
@@ -70,7 +73,7 @@ public class DragonSoulEater : BaseEnemy
     {
         if (m_IsBoss && !m_IsHealthBarInit)
         {
-            m_HealthBar.SetBossHealth("Dragon Soul Eater", 500);
+            m_HealthBar.SetBossHealth("Dragon Soul Eater", m_MaxHealth);
             m_IsHealthBarInit = true;
         }
         m_Animator.SetBool(m_HashRun, true);
@@ -93,7 +96,7 @@ public class DragonSoulEater : BaseEnemy
 
     public override void OnAttackUpdate()
     {
-        if (!IsTargetInRange(m_AttackThreshold))
+        if (!IsTargetInRange(m_AttackThreshold) && !m_IsCasting && !m_IsAttacking)
         {
             m_Animator.ResetTrigger(m_HashAttack);
             ChangeState(State.Chase);
@@ -127,7 +130,7 @@ public class DragonSoulEater : BaseEnemy
     public override void OnDeathEnter()
     {
         m_Animator.ResetTrigger(m_HashAttack);
-        m_Animator.SetTrigger(m_HashDeath);
+        m_Animator.SetBool(m_HashDead, true);
         if (m_OnDeathEvent != null) m_OnDeathEvent.Invoke();
     }
 
@@ -171,7 +174,8 @@ public class DragonSoulEater : BaseEnemy
 
     private IEnumerator FireballAttack()
     {
-        for (int i = 0; i < 3; i++)
+        m_IsCasting = true;
+        for (int i = 0; i < 5; i++)
         {
             Ray ray = new Ray(m_FireballSpawn.position, m_FireballSpawn.forward);
             RaycastHit hit;
@@ -184,31 +188,37 @@ public class DragonSoulEater : BaseEnemy
             transform.LookAt(m_Target.transform);
             Missile fireball = PoolMgr.Instance.Spawn(m_FireballObj.name, m_FireballSpawn.transform.position, Quaternion.identity).GetComponent<Missile>();
             fireball.TargetLayer = m_Target.gameObject.layer;
-            fireball.Rigidbody.AddForce(directionWithoutSpread.normalized * m_FIreballSpawnForce, ForceMode.Impulse);
+
+            fireball.Rigidbody.AddForce(directionWithoutSpread.normalized * m_FireballSpawnForce, ForceMode.Impulse);
 
             yield return new WaitForSeconds(0.25f);
         }
+        m_IsCasting = false;
     }
     #endregion
 
     #region Animation Event Methods
     public void OnTailAttackStart()
     {
+        m_IsAttacking = true;
         m_Tail.ActivateWeaponCollider();
     }
 
     public void OnTailAttackEnd()
     {
+        m_IsAttacking = false;
         m_Tail.DeactivateWeaponCollider();
     }
 
     public void OnBiteAttackStart()
     {
+        m_IsAttacking = true;
         m_Jaw.ActivateWeaponCollider();
     }
 
     public void OnBiteAttackEnd()
     {
+        m_IsAttacking = false;
         m_Jaw.DeactivateWeaponCollider();
     }
     #endregion
