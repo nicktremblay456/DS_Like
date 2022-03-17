@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] private LayerMask m_WalkGround;
 
     [Space, Header("Combat Settings")]
+    [SerializeField] private PotionSlot m_Potion;
     [SerializeField] private HealthBars m_HealthBars;
     [SerializeField] private MeleeWeapon m_Weapon;
     private float m_NextAttackTime = 0f;
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     private float m_SprintStamDelay = 0.5f;
     private const int SPRINT_STAM_COST = 2;
     private const int ROLL_STAM_COST = 15;
+    private const int JUMP_ATTACK_COST = 25;
 
     private PlayerInput m_Input;
     private Rigidbody m_RigidBody;
@@ -52,10 +54,12 @@ public class PlayerController : MonoBehaviour, IDamageable
     private bool m_IsAttacking = false;
     private bool m_IsSprinting = false;
     private bool m_IsRunning = false;
+    private bool m_IsDrinking = false;
     //private bool m_IsWalkable = true;
     private bool m_IsRolling = false;
     private bool m_IsDead = false;
 
+    public bool IsDrinking { get => m_IsDrinking; }
     private bool isGrounded
     {
         get => Physics.SphereCast(transform.position + m_Collider.center, m_Collider.radius, Vector3.down, out m_HitInfo, m_Collider.height * 0.5f, m_WalkGround, QueryTriggerInteraction.Ignore);
@@ -80,7 +84,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     private readonly int m_HashAttackOne = Animator.StringToHash("Attack_1");
     private readonly int m_HashAttackTwo = Animator.StringToHash("Attack_2");
     private readonly int m_HashAttackThree = Animator.StringToHash("Attack_3");
-    //private readonly int m_HashJumpAttack = Animator.StringToHash("JumpAttack");
+    private readonly int m_HashDrink = Animator.StringToHash("Drink");
+    private readonly int m_HashJumpAttack = Animator.StringToHash("JumpAttack");
     private readonly int m_HashDeath = Animator.StringToHash("Death");
     private readonly int m_HashRoll = Animator.StringToHash("Roll");
     #endregion
@@ -110,12 +115,17 @@ public class PlayerController : MonoBehaviour, IDamageable
         CalculateGroundAngle();
         ControlMaterialPhysics();
         HandleAttackAnim();
-        if (m_Input.AttackInput && !m_IsRunning && !m_IsSprinting && !m_IsRolling)
+        if (m_Input.AttackInput && !m_IsRunning && !m_IsSprinting && !m_IsRolling && !m_IsDrinking)
         {
             if (Time.time > m_NextAttackTime)
             {
                 Attack();
             }
+        }
+        if (m_Input.AttackInput && !isGrounded)
+        {
+            if (Time.time > m_NextAttackTime)
+            Attack();
         }
 
         if (m_Input.JumpInput)
@@ -128,6 +138,27 @@ public class PlayerController : MonoBehaviour, IDamageable
             Roll();
         }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            DrinkPotion();
+        }
+
+        if (m_Input.SprintInput)
+        {
+            if (!m_IsSprinting) m_IsSprinting = true;
+            m_SprintStamDelay -= Time.deltaTime;
+            if (m_SprintStamDelay <= 0f)
+            {
+                m_HealthBars.UseStamina(SPRINT_STAM_COST);
+                m_SprintStamDelay = m_ResetSprintDelay;
+            }
+        }
+        else
+        {
+            if (m_IsSprinting) m_IsSprinting = false;
+            if (m_CurrentSpeed > m_RunSpeed) m_CurrentSpeed = m_RunSpeed;
+        }
+
         HandleMovementAnimation();
         //if (m_ActiveDebug)
         //{
@@ -138,19 +169,10 @@ public class PlayerController : MonoBehaviour, IDamageable
     private void FixedUpdate ()
     {
         // Physics
-        if (m_Input.MoveInput != Vector2.zero && !m_IsAttacking)
+        if (m_Input.MoveInput != Vector2.zero && !m_IsAttacking && !m_IsDrinking)
         {
             Rotate();
             SetSpeed();
-            if (m_IsSprinting)
-            {
-                m_SprintStamDelay -= Time.deltaTime;
-                if (m_SprintStamDelay <= 0f)
-                {
-                    m_HealthBars.UseStamina(SPRINT_STAM_COST);
-                    m_SprintStamDelay = m_ResetSprintDelay;
-                }
-            }
         }
         else ResetSpeed();
 
@@ -264,21 +286,14 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         if (m_GroundAngle < m_MaxGroundAngle + 90f)
         {
-            if (m_Input.SprintInput && m_HealthBars.Health.CurrentStamina >= SPRINT_STAM_COST)
+            if (m_IsSprinting && m_CurrentSpeed < m_SprintSpeed)
             {
-                if (m_CurrentSpeed < m_SprintSpeed)
-                {
-                    m_CurrentSpeed += m_SprintSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
-                    if (!m_IsSprinting) m_IsSprinting = true;
-                }
+                m_CurrentSpeed += m_SprintSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
             }
-            else
+            else if (m_CurrentSpeed < m_RunSpeed)
             {
-                if (m_CurrentSpeed < m_RunSpeed)
-                {
-                    m_CurrentSpeed += m_RunSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
-                    if (!m_IsRunning) m_IsRunning = true;
-                }
+                m_CurrentSpeed += m_RunSpeed * (m_RunAcceleration * Time.fixedDeltaTime);
+                if (!m_IsRunning) m_IsRunning = true;
             }
         }
         else ResetSpeed();
@@ -286,7 +301,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void Jump ()
     {
-        if (isGrounded && !m_IsRolling)
+        if (isGrounded && !m_IsRolling && !m_IsDrinking)
         {
             m_RigidBody.AddForce(transform.up * m_JumpForce);
         }
@@ -294,7 +309,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void Roll()
     {
-        if (!m_IsRolling && isGrounded && !m_IsAttacking)
+        if (!m_IsRolling && isGrounded && !m_IsAttacking && !m_IsDrinking)
         {
             if (m_HealthBars.Health.CurrentStamina >= ROLL_STAM_COST)
             {
@@ -322,6 +337,22 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         m_IsRolling = false;
     }
+
+    private void DrinkPotion()
+    {
+        if (!m_IsDrinking)
+        {
+            m_IsDrinking = true;
+            m_Animator.SetBool(m_HashDrink, true);
+            m_Potion.DrinkPotion();
+        }
+    }
+
+    public void OnDrinkEnd()
+    {
+        m_IsDrinking = false;
+        m_Animator.SetBool(m_HashDrink, false);
+    }
     #endregion
 
     #region Combat Methods
@@ -348,18 +379,28 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         m_LastClickedTime = Time.time;
         m_NbrOfClicks++;
-        if (m_NbrOfClicks == 1) m_Animator.SetBool(m_HashAttackOne, true); ;
-        m_NbrOfClicks = Mathf.Clamp(m_NbrOfClicks, 0, 3);
+        if (isGrounded)
+        {
+            if (m_NbrOfClicks == 1) m_Animator.SetBool(m_HashAttackOne, true); ;
+            m_NbrOfClicks = Mathf.Clamp(m_NbrOfClicks, 0, 3);
 
-        if (m_NbrOfClicks >= 2 && IsAttackAnim("Attack_1"))
-        {
-            m_Animator.SetBool(m_HashAttackOne, false);
-            m_Animator.SetBool(m_HashAttackTwo, true);
+            if (m_NbrOfClicks >= 2 && IsAttackAnim("Attack_1"))
+            {
+                m_Animator.SetBool(m_HashAttackOne, false);
+                m_Animator.SetBool(m_HashAttackTwo, true);
+            }
+            if (m_NbrOfClicks >= 3 && IsAttackAnim("Attack_2"))
+            {
+                m_Animator.SetBool(m_HashAttackTwo, false);
+                m_Animator.SetBool(m_HashAttackThree, true);
+            }
         }
-        if (m_NbrOfClicks >= 3 && IsAttackAnim("Attack_2"))
+        else
         {
-            m_Animator.SetBool(m_HashAttackTwo, false);
-            m_Animator.SetBool(m_HashAttackThree, true);
+            if (m_HealthBars.Health.CurrentStamina < JUMP_ATTACK_COST) return;
+            m_HealthBars.UseStamina(JUMP_ATTACK_COST);
+            m_Weapon.SetJumpAttackDamage();
+            if (m_NbrOfClicks == 1) m_Animator.SetTrigger(m_HashJumpAttack);
         }
     }
 
@@ -373,6 +414,11 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         m_IsAttacking = false;
         m_Weapon.DeactivateWeaponCollider();
+    }
+
+    public void OnJumpAttackEnd()
+    {
+        m_Weapon.ResetDamage();
     }
     #endregion
 

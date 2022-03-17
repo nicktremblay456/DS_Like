@@ -7,6 +7,7 @@ public class MeleeWeapon : MonoBehaviour
     [SerializeField] private int m_Damage;
     [SerializeField] private LayerMask m_DamageableLayer;
     private Collider m_Collider;
+    private int m_ResetDamage;
 
     public Collider Collider { get => m_Collider; }
 
@@ -15,6 +16,7 @@ public class MeleeWeapon : MonoBehaviour
         m_Collider = GetComponent<Collider>();
         m_Collider.isTrigger = true;
         m_Collider.enabled = false;
+        m_ResetDamage = m_Damage;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -27,10 +29,18 @@ public class MeleeWeapon : MonoBehaviour
             if (damageable != null) damageable.TakeDamage(m_Damage, false);
             // Hit fx
             GameObject hitFx = PoolMgr.Instance.Spawn("FX_Blood", other.transform.position, other.transform.rotation);
-            if (hitFx.transform.localScale.x >= 1 && hitFx.transform.localScale.y >= 1 && hitFx.transform.localScale.z >= 1)
-                hitFx.transform.localScale = Vector3.one;
-            else hitFx.transform.localScale = other.gameObject.transform.localScale; 
+            hitFx.transform.localScale = other.gameObject.transform.localScale / 2; 
         }
+    }
+
+    public void SetJumpAttackDamage()
+    {
+        m_Damage += m_Damage / 2;
+    }
+
+    public void ResetDamage()
+    {
+        m_Damage = m_ResetDamage;
     }
 
     public void ActivateWeaponCollider()
