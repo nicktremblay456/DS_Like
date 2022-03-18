@@ -118,14 +118,12 @@ public class PlayerController : MonoBehaviour, IDamageable
         if (m_Input.AttackInput && !m_IsRunning && !m_IsSprinting && !m_IsRolling && !m_IsDrinking)
         {
             if (Time.time > m_NextAttackTime)
-            {
                 Attack();
-            }
         }
         if (m_Input.AttackInput && !isGrounded)
         {
             if (Time.time > m_NextAttackTime)
-            Attack();
+                Attack();
         }
 
         if (m_Input.JumpInput)

@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &526650144
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 526650145}
+  m_Layer: 7
+  m_Name: FireballSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &526650145
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526650144}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.5, z: 3.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 256079848220100291}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &256079848220198743
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,7 +119,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 256079848220205367}
-  m_LocalRotation: {x: 0, y: 0, z: -0.13022643, w: 0.9914843}
+  m_LocalRotation: {x: 0, y: -0, z: -0.13022643, w: 0.9914843}
   m_LocalPosition: {x: -113.724525, y: -2.842171e-14, z: -1.9661412e-14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1167,6 +1197,7 @@ Transform:
   m_Children:
   - {fileID: 256079848220061183}
   - {fileID: 256079848220021571}
+  - {fileID: 526650145}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1223,17 +1254,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dc1b8ac76f90db44aa95c0b23bd395e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxHealth: 500
-  m_ChaseThreshold: 25
+  m_MaxHealth: 750
+  m_ChaseThreshold: 22
   m_AttackThreshold: 5
   m_DespawnTimer: 2.5
   m_OnDeathEvent:
     m_PersistentCalls:
-      m_Calls: []
-  m_FireballSpawn: {fileID: 256079848220107803}
-  m_FireballObj: {fileID: 9140192330593786775, guid: a584fbadf1465f44daf7355c404722b0, type: 3}
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Door, Assembly-CSharp
+        m_MethodName: OpenAndUnlockDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Door, Assembly-CSharp
+        m_MethodName: OpenAndUnlockDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_FireballSpawn: {fileID: 526650145}
+  m_FireballObj: {fileID: 9140192330593786775, guid: 69418674bffd5dd4ea6e1f54ceaa357d, type: 3}
+  m_FireballSpawnForce: 10
   m_Tail: {fileID: 6831451581344000607}
   m_Jaw: {fileID: 220976462}
+  m_IsBoss: 1
 --- !u!1 &256079848220287753
 GameObject:
   m_ObjectHideFlags: 0
@@ -1732,7 +1789,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 256079848220305833}
-  m_LocalRotation: {x: 0, y: 0, z: -0.12814786, w: 0.9917551}
+  m_LocalRotation: {x: 0, y: -0, z: -0.12814786, w: 0.9917551}
   m_LocalPosition: {x: -116.23379, y: 0, z: 5.1222806e-15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

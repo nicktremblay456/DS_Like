@@ -96,17 +96,17 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     }
 
     #region Abstract Methods
-    public abstract void OnIdleEnter();
-    public abstract void OnIdleUpdate();
+    protected abstract void OnIdleEnter();
+    protected abstract void OnIdleUpdate();
 
-    public abstract void OnChaseEnter();
-    public abstract void OnChaseUpdate();
+    protected abstract void OnChaseEnter();
+    protected abstract void OnChaseUpdate();
 
-    public abstract void OnAttackEnter();
-    public abstract void OnAttackUpdate();
-    public abstract void OnAttackExit();
+    protected abstract void OnAttackEnter();
+    protected abstract void OnAttackUpdate();
+    protected abstract void OnAttackExit();
 
-    public abstract void OnDeathEnter();
-    public abstract void OnDeathUpdate();
+    protected abstract void OnDeathEnter();
+    protected abstract void OnDeathUpdate();
     #endregion
 }

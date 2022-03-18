@@ -2313,8 +2313,8 @@ GameObject:
   - component: {fileID: 2519965274817547569}
   - component: {fileID: 8327756839960144457}
   - component: {fileID: 8327756839960144456}
-  - component: {fileID: 8327756839960144459}
   - component: {fileID: 8327756839960144458}
+  - component: {fileID: 8327756839960144459}
   m_Layer: 6
   m_Name: Player_Warrior
   m_TagString: Untagged
@@ -2389,6 +2389,19 @@ CapsuleCollider:
   m_Height: 1.7069434
   m_Direction: 1
   m_Center: {x: 0, y: 0.8522034, z: 0}
+--- !u!114 &8327756839960144458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9174759780028009969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b78c5970c3c4184686cb02e61c8a26b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerControllerInputBlocked: 0
 --- !u!114 &8327756839960144459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2415,19 +2428,6 @@ MonoBehaviour:
   m_Potion: {fileID: 0}
   m_HealthBars: {fileID: 0}
   m_Weapon: {fileID: 8327756840555804767}
---- !u!114 &8327756839960144458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9174759780028009969}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b78c5970c3c4184686cb02e61c8a26b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerControllerInputBlocked: 0
 --- !u!1001 &8327756839518702489
 PrefabInstance:
   m_ObjectHideFlags: 0

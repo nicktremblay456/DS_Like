@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    [SerializeField] private LayerMask m_TriggerLayer;
+    [SerializeField] private bool m_IsLockedOnStart = false;
 
     private Animator m_Animator;
 
@@ -28,24 +28,46 @@ public class Door : MonoBehaviour
         {
             m_IsOpen = !m_IsOpen;
             m_IsReady = false;
-            if (m_IsOpen) m_Animator.SetTrigger(m_HashOpen);
-            else m_Animator.SetTrigger(m_HashClose);
+            SetDoorTrigger(m_IsOpen);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (0 != (m_TriggerLayer.value & 1 << other.gameObject.layer))
+        if (0 != (LayerMask.GetMask("Player") & 1 << other.gameObject.layer))
         {
             m_IsInRange = true;
+        }
+        if (0 != (LayerMask.GetMask("Enemy") & 1 << other.gameObject.layer))
+        {
+            Debug.Log("Enemy Open Door");
+            if (!m_IsOpen)
+            {
+                m_IsOpen = true;
+                SetDoorTrigger(m_IsOpen);
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (0 != (m_TriggerLayer.value & 1 << other.gameObject.layer))
+        if (0 != (LayerMask.GetMask("Player") & 1 << other.gameObject.layer))
         {
             m_IsInRange = false;
+        }
+    }
+
+    private void SetDoorTrigger(bool open)
+    {
+        if (open)
+        {
+            if (!m_IsOpen) m_IsOpen = true;
+            m_Animator.SetTrigger(m_HashOpen);
+        }
+        else
+        {
+            if (m_IsOpen) m_IsOpen = false;
+            m_Animator.SetTrigger(m_HashClose);
         }
     }
 

@@ -57,19 +57,19 @@ public class DragonSoulEater : BaseEnemy
     }
 
     #region States
-    public override void OnIdleEnter()
+    protected override void OnIdleEnter()
     {
         m_Animator.SetBool(m_HashRun, false);
         StopMovement();
     }
 
-    public override void OnIdleUpdate()
+    protected override void OnIdleUpdate()
     {
         if (IsTargetInRange(m_ChaseThreshold) && !m_Target.IsDead)
             ChangeState(State.Chase);
     }
 
-    public override void OnChaseEnter()
+    protected override void OnChaseEnter()
     {
         if (m_IsBoss && !m_IsHealthBarInit)
         {
@@ -80,21 +80,21 @@ public class DragonSoulEater : BaseEnemy
         GainMovement();
     }
 
-    public override void OnChaseUpdate()
+    protected override void OnChaseUpdate()
     {
         m_Agent.SetDestination(m_Target.transform.position);
         if (IsTargetInRange(m_AttackThreshold))
             ChangeState(State.Attack);
     }
 
-    public override void OnAttackEnter()
+    protected override void OnAttackEnter()
     {
         m_Animator.SetBool(m_HashRun, false);
         StopMovement();
         Attack();
     }
 
-    public override void OnAttackUpdate()
+    protected override void OnAttackUpdate()
     {
         if (!IsTargetInRange(m_AttackThreshold) && !m_IsCasting && !m_IsAttacking)
         {
@@ -113,7 +113,7 @@ public class DragonSoulEater : BaseEnemy
         }
     }
 
-    public override void OnAttackExit()
+    protected override void OnAttackExit()
     {
         m_AttackTimer = m_ResetAttackTimer;
         m_Animator.ResetTrigger(m_HashAttack);
@@ -127,14 +127,14 @@ public class DragonSoulEater : BaseEnemy
         }
     }
 
-    public override void OnDeathEnter()
+    protected override void OnDeathEnter()
     {
         m_Animator.ResetTrigger(m_HashAttack);
         m_Animator.SetBool(m_HashDead, true);
         if (m_OnDeathEvent != null) m_OnDeathEvent.Invoke();
     }
 
-    public override void OnDeathUpdate()
+    protected override void OnDeathUpdate()
     {
         if (!m_IsDeath)
         {

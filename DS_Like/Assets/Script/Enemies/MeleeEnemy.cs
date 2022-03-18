@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MeleeEnemy : BaseEnemy
 {
-    [SerializeField] private MeleeWeapon m_Sword;
+    [SerializeField] private MeleeWeapon m_Weapon;
 
     [SerializeField] private float m_AttackDelay = 2.5f;
     private float m_ResetTimer;
@@ -28,41 +28,43 @@ public class MeleeEnemy : BaseEnemy
     public override void TakeDamage(int damageAmount, bool ignoreRoll = false)
     {
         if (!m_IsDeath) m_Animator.SetTrigger(m_HashTakeDmg);
+        if (m_Weapon.Collider.enabled) m_Weapon.DeactivateWeaponCollider();
+
         base.TakeDamage(damageAmount, ignoreRoll);
     }
 
-    public override void OnIdleEnter()
+    protected override void OnIdleEnter()
     {
         m_Animator.SetBool(m_HashWalk, false);
         StopMovement();
     }
 
-    public override void OnIdleUpdate()
+    protected override void OnIdleUpdate()
     {
         if (IsTargetInRange(m_ChaseThreshold) && !m_Target.IsDead)
             ChangeState(State.Chase);
     }
 
-    public override void OnChaseEnter()
+    protected override void OnChaseEnter()
     {
         m_Animator.SetBool(m_HashWalk, true);
         GainMovement();
     }
 
-    public override void OnChaseUpdate()
+    protected override void OnChaseUpdate()
     {
         m_Agent.SetDestination(m_Target.transform.position);
         if (IsTargetInRange(m_AttackThreshold))
             ChangeState(State.Attack);
     }
 
-    public override void OnAttackEnter()
+    protected override void OnAttackEnter()
     {
         m_Animator.SetBool(m_HashWalk, false);
         StopMovement();
     }
 
-    public override void OnAttackUpdate()
+    protected override void OnAttackUpdate()
     {
         if (!IsTargetInRange(m_AttackThreshold) && !m_IsAttacking)
         {
@@ -78,26 +80,26 @@ public class MeleeEnemy : BaseEnemy
         }
     }
 
-    public override void OnAttackExit()
+    protected override void OnAttackExit()
     {
         m_Animator.ResetTrigger(m_HashAttack);
-        m_Sword.DeactivateWeaponCollider();
+        m_Weapon.DeactivateWeaponCollider();
     }
 
-    public override void OnDeathEnter()
+    protected override void OnDeathEnter()
     {
         m_Animator.SetBool(m_HashDead, true);
         if (m_OnDeathEvent != null) m_OnDeathEvent.Invoke();
     }
 
-    public override void OnDeathUpdate()
+    protected override void OnDeathUpdate()
     {
         if (!m_IsDeath)
         {
             m_DespawnTimer -= Time.deltaTime;
             if (m_DespawnTimer <= 0f)
             {
-                m_Sword.DeactivateWeaponCollider();
+                m_Weapon.DeactivateWeaponCollider();
                 m_IsDeath = true;
                 enabled = false;
             }
@@ -114,12 +116,12 @@ public class MeleeEnemy : BaseEnemy
     public void OnAttackStart()
     {
         m_IsAttacking = true;
-        m_Sword.ActivateWeaponCollider();
+        m_Weapon.ActivateWeaponCollider();
     }
 
     public void OnAttackEnd()
     {
         m_IsAttacking = false;
-        m_Sword.DeactivateWeaponCollider();
+        m_Weapon.DeactivateWeaponCollider();
     }
 }

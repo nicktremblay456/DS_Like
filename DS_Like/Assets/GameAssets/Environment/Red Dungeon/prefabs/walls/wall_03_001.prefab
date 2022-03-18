@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 4624961301824370}
   - component: {fileID: 33111192037621794}
   - component: {fileID: 23783110273620142}
+  - component: {fileID: 6187008705373328812}
   m_Layer: 0
   m_Name: obj_04
   m_TagString: Untagged
@@ -179,6 +180,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &6187008705373328812
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426486486821848}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300018, guid: 9889117518dff7b42806ad82249545f8, type: 3}
 --- !u!1 &1513912750257192
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,6 +205,7 @@ GameObject:
   - component: {fileID: 4481337779211208}
   - component: {fileID: 33541327262742924}
   - component: {fileID: 23654601813401958}
+  - component: {fileID: 6999573277218230061}
   m_Layer: 0
   m_Name: wicket
   m_TagString: Untagged
@@ -261,6 +277,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &6999573277218230061
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513912750257192}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300012, guid: 9889117518dff7b42806ad82249545f8, type: 3}
 --- !u!1 &1860811739992224
 GameObject:
   m_ObjectHideFlags: 0
