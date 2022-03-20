@@ -122,8 +122,11 @@ public class PlayerController : MonoBehaviour, IDamageable
         }
         if (m_Input.AttackInput && !isGrounded)
         {
-            if (Time.time > m_NextAttackTime)
-                Attack();
+            if (m_RigidBody.velocity.y > 0)
+            {
+                if (Time.time > m_NextAttackTime)
+                    Attack();
+            }
         }
 
         if (m_Input.JumpInput)
@@ -141,7 +144,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             DrinkPotion();
         }
 
-        if (m_Input.SprintInput)
+        if (m_Input.SprintInput && m_HealthBars.Health.CurrentStamina >= SPRINT_STAM_COST)
         {
             if (!m_IsSprinting) m_IsSprinting = true;
             m_SprintStamDelay -= Time.deltaTime;

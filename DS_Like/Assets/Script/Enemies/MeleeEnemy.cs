@@ -41,8 +41,7 @@ public class MeleeEnemy : BaseEnemy
 
     protected override void OnIdleUpdate()
     {
-        if (IsTargetInRange(m_ChaseThreshold) && !m_Target.IsDead)
-            ChangeState(State.Chase);
+        if (m_Fov.CanSeePlayer && !m_Target.IsDead || m_IsEngaged) ChangeState(State.Chase);
     }
 
     protected override void OnChaseEnter()
@@ -74,10 +73,7 @@ public class MeleeEnemy : BaseEnemy
         if (m_Target.IsDead && !m_IsAttacking) ChangeState(State.Idle);
 
         m_AttackDelay -= Time.deltaTime;
-        if (m_AttackDelay <= 0f)
-        {
-            Attack();
-        }
+        if (m_AttackDelay <= 0f) Attack();
     }
 
     protected override void OnAttackExit()

@@ -9,7 +9,6 @@ using TNT.StateMachine;
 public abstract class BaseEnemy : MonoBehaviour, IDamageable
 {
     [SerializeField] protected int m_MaxHealth;
-    [SerializeField] protected float m_ChaseThreshold;
     [SerializeField] protected float m_AttackThreshold;
     [Space]
     [SerializeField] protected float m_DespawnTimer = 2.5f;
@@ -17,22 +16,29 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     [SerializeField] protected UnityEvent m_OnDeathEvent;
 
     protected bool m_IsDeath = false;
+    public bool IsDeath { get => m_IsDeath; }
 
     protected enum State
     {
         Idle, Chase, Attack, Death,
     }
 
+    protected bool m_IsEngaged = false;
+
     protected StateMachine m_SM;
     protected Animator m_Animator;
     protected NavMeshAgent m_Agent;
     protected PlayerController m_Target;
     protected Health m_Health;
+    protected EnemyFOV m_Fov;
+
+    public GameObject Target { get => m_Target.gameObject; }
 
     protected virtual void Awake()
     {
         m_Agent = GetComponent<NavMeshAgent>();
         m_Animator = GetComponent<Animator>();
+        m_Fov = GetComponent<EnemyFOV>();
 
         m_Target = FindObjectOfType<PlayerController>();
 
@@ -91,6 +97,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     // IDamageable methods
     public virtual void TakeDamage(int damageAmount, bool ignoreRoll = false)
     {
+        if (!m_IsEngaged) m_IsEngaged = true;
         m_Health.TakeDamage(damageAmount);
         if (m_Health.CurrentHealth <= 0f) ChangeState(State.Death);
     }

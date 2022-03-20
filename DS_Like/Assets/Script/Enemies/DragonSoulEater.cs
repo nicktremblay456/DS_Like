@@ -50,6 +50,7 @@ public class DragonSoulEater : BaseEnemy
     {
         if (m_IsBoss)
         {
+            if (!m_IsEngaged) m_IsEngaged = true;
             m_HealthBar.Health.TakeDamage(damageAmount);
             if (m_HealthBar.Health.CurrentHealth <= 0f && !m_IsDeath) ChangeState(State.Death);
         }
@@ -65,8 +66,7 @@ public class DragonSoulEater : BaseEnemy
 
     protected override void OnIdleUpdate()
     {
-        if (IsTargetInRange(m_ChaseThreshold) && !m_Target.IsDead)
-            ChangeState(State.Chase);
+        if ((m_Fov.CanSeePlayer && !m_Target.IsDead) || m_IsEngaged) ChangeState(State.Chase);
     }
 
     protected override void OnChaseEnter()

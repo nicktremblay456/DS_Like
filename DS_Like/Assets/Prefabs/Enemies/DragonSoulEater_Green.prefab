@@ -1177,6 +1177,7 @@ GameObject:
   - component: {fileID: 256079848229668531}
   - component: {fileID: 256079848679533408}
   - component: {fileID: 256079848679533415}
+  - component: {fileID: 6785892807464192294}
   m_Layer: 7
   m_Name: DragonSoulEater_Green
   m_TagString: Untagged
@@ -1198,6 +1199,7 @@ Transform:
   - {fileID: 256079848220061183}
   - {fileID: 256079848220021571}
   - {fileID: 526650145}
+  - {fileID: 4952838743970694610}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1255,7 +1257,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MaxHealth: 750
-  m_ChaseThreshold: 22
   m_AttackThreshold: 5
   m_DespawnTimer: 2.5
   m_OnDeathEvent:
@@ -1291,6 +1292,27 @@ MonoBehaviour:
   m_Tail: {fileID: 6831451581344000607}
   m_Jaw: {fileID: 220976462}
   m_IsBoss: 1
+--- !u!114 &6785892807464192294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256079848220285829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86aa446ef87b5d044a358fb83a862ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EyeTransform: {fileID: 4952838743970694610}
+  m_Radius: 22.75
+  m_Angle: 75
+  m_TargetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  m_ObstacleLayer:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!1 &256079848220287753
 GameObject:
   m_ObjectHideFlags: 0
@@ -2294,3 +2316,33 @@ Transform:
   m_Father: {fileID: 256079848220118615}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -2.9617023}
+--- !u!1 &3474172553806888313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4952838743970694610}
+  m_Layer: 7
+  m_Name: Eye
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4952838743970694610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3474172553806888313}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.25, z: 2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 256079848220100291}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
