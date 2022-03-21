@@ -20,6 +20,7 @@ public class Door : MonoBehaviour
     private void Awake()
     {
         m_Animator = GetComponent<Animator>();
+        if (m_IsLockedOnStart) m_IsDoorLocked = true;
     }
 
     private void Update()
@@ -69,6 +70,11 @@ public class Door : MonoBehaviour
             if (m_IsOpen) m_IsOpen = false;
             m_Animator.SetTrigger(m_HashClose);
         }
+    }
+
+    public void UnlockDoor()
+    {
+        m_IsDoorLocked = false;
     }
 
     public void OpenAndUnlockDoor()

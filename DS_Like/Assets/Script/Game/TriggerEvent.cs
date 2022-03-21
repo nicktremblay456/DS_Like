@@ -8,6 +8,7 @@ public class TriggerEvent : MonoBehaviour
 {
     [SerializeField] private LayerMask m_TriggerLayer;
     [Space]
+    [SerializeField] private UnityEvent m_OnCollisionEnter;
     [SerializeField] private UnityEvent m_OnTriggerEnter;
     [SerializeField] private UnityEvent m_OnTriggerExit;
 
@@ -18,6 +19,14 @@ public class TriggerEvent : MonoBehaviour
     {
         m_Collider = GetComponent<Collider>();
         if (!m_Collider.isTrigger) m_Collider.isTrigger = true;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (0 != (m_TriggerLayer.value & 1 << collision.gameObject.layer))
+        {
+            if (m_OnCollisionEnter != null) m_OnCollisionEnter.Invoke();
+        }
     }
 
     private void OnTriggerEnter(Collider other)

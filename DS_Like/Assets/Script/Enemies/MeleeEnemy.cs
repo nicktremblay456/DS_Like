@@ -35,12 +35,24 @@ public class MeleeEnemy : BaseEnemy
 
     protected override void OnIdleEnter()
     {
-        m_Animator.SetBool(m_HashWalk, false);
-        StopMovement();
+        if (!m_IsPatrol)
+        {
+            m_Animator.SetBool(m_HashWalk, false);
+            StopMovement();
+        }
+        else m_Animator.SetBool(m_HashWalk, true);
     }
 
     protected override void OnIdleUpdate()
     {
+        if (m_IsPatrol)
+        {
+            if (Vector3.Distance(transform.position, m_WayPoints[m_WayPointIndex].position) < 1f)
+            {
+                NextWayPoint();
+            }
+            m_Agent.SetDestination(m_WayPoints[m_WayPointIndex].position);
+        }
         if (m_Fov.CanSeePlayer && !m_Target.IsDead || m_IsEngaged) ChangeState(State.Chase);
     }
 
@@ -84,22 +96,15 @@ public class MeleeEnemy : BaseEnemy
 
     protected override void OnDeathEnter()
     {
-        m_Animator.SetBool(m_HashDead, true);
+        m_IsDeath = true;
+        m_Weapon.DeactivateWeaponCollider();
+        m_Animator.SetBool(m_HashDead, m_IsDeath);
         if (m_OnDeathEvent != null) m_OnDeathEvent.Invoke();
     }
 
     protected override void OnDeathUpdate()
     {
-        if (!m_IsDeath)
-        {
-            m_DespawnTimer -= Time.deltaTime;
-            if (m_DespawnTimer <= 0f)
-            {
-                m_Weapon.DeactivateWeaponCollider();
-                m_IsDeath = true;
-                enabled = false;
-            }
-        }
+
     }
 
     private void Attack()

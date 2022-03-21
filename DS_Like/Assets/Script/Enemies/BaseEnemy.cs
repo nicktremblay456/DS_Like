@@ -8,6 +8,10 @@ using TNT.StateMachine;
 [RequireComponent(typeof(NavMeshAgent)), RequireComponent(typeof(Animator))]
 public abstract class BaseEnemy : MonoBehaviour, IDamageable
 {
+    [SerializeField] protected bool m_IsPatrol = false;
+    [SerializeField] protected Transform[] m_WayPoints;
+    protected int m_WayPointIndex;
+    [Space]
     [SerializeField] protected int m_MaxHealth;
     [SerializeField] protected float m_AttackThreshold;
     [Space]
@@ -50,6 +54,10 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     protected virtual void Update()
     {
         m_SM.UpdateSM();
+        if (m_IsDeath)
+        {
+            if (!IsTargetInRange(100)) gameObject.SetActive(false);
+        }
     }
 
     protected virtual void InitSM()
@@ -74,6 +82,17 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
         m_SM.OnExit((int)State.Attack, OnAttackExit);
 
         m_SM.Init((int)State.Idle);
+    }
+    
+    protected void Patrol()
+    {
+        m_Agent.SetDestination(m_WayPoints[m_WayPointIndex].position);
+    }
+
+    protected void NextWayPoint()
+    {
+        m_WayPointIndex++;
+        if (m_WayPointIndex >= m_WayPoints.Length) m_WayPointIndex = 0;
     }
 
     protected void GainMovement() => m_Agent.isStopped = false;

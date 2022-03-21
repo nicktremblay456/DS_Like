@@ -10552,13 +10552,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79a0ad540e41eba41888eb5ab4515316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_IsPatrol: 1
+  m_WayPoints:
+  - {fileID: 0}
+  - {fileID: 0}
   m_MaxHealth: 150
   m_AttackThreshold: 1.8
   m_DespawnTimer: 2.5
   m_OnDeathEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_Weapon: {fileID: 5792088536382574518}
+  m_Weapon: {fileID: 753549979901511723}
   m_AttackDelay: 1.9
 --- !u!114 &8190732050410857503
 MonoBehaviour:
@@ -11251,8 +11255,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7327238469634911029}
   - component: {fileID: 7327238469648874175}
-  - component: {fileID: 5792088536382574519}
-  - component: {fileID: 5792088536382574518}
   m_Layer: 7
   m_Name: Mesh_Weapon_002
   m_TagString: Untagged
@@ -11327,35 +11329,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -2.6158433, y: 1.9017491, z: 2.3612237}
     m_Extent: {x: 4.3358254, y: 2.6129713, z: 5.5801616}
   m_DirtyAABB: 0
---- !u!65 &5792088536382574519
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7327238469635274709}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 9.114393, y: 13.268429, z: 5.2050824}
-  m_Center: {x: -0.41520357, y: -7.2413106, z: 6.676679}
---- !u!114 &5792088536382574518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7327238469635274709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d705378b05222334f94f12fe8c0cb2d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Damage: 35
-  m_DamageableLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!1 &7327238469635274721
 GameObject:
   m_ObjectHideFlags: 0
@@ -11488,6 +11461,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7327238469634911177}
+  - component: {fileID: 2808380738219560735}
+  - component: {fileID: 753549979901511723}
   m_Layer: 7
   m_Name: Bip01 R Hand
   m_TagString: Untagged
@@ -11513,6 +11488,35 @@ Transform:
   m_Father: {fileID: 7327238469634911183}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 67.95742, y: 170.91156, z: 171.86244}
+--- !u!65 &2808380738219560735
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7327238469635274729}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7.697296, y: 4.8253264, z: 4.76596}
+  m_Center: {x: -3.3486655, y: 1.4138753, z: 4.487406}
+--- !u!114 &753549979901511723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7327238469635274729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d705378b05222334f94f12fe8c0cb2d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Damage: 25
+  m_DamageableLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &7327238469635274731
 GameObject:
   m_ObjectHideFlags: 0
