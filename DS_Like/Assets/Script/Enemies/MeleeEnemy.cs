@@ -47,11 +47,7 @@ public class MeleeEnemy : BaseEnemy
     {
         if (m_IsPatrol)
         {
-            if (Vector3.Distance(transform.position, m_WayPoints[m_WayPointIndex].position) < 1f)
-            {
-                NextWayPoint();
-            }
-            m_Agent.SetDestination(m_WayPoints[m_WayPointIndex].position);
+            Patrol();
         }
         if (m_Fov.CanSeePlayer && !m_Target.IsDead || m_IsEngaged) ChangeState(State.Chase);
     }
@@ -73,6 +69,7 @@ public class MeleeEnemy : BaseEnemy
     {
         m_Animator.SetBool(m_HashWalk, false);
         StopMovement();
+        Attack();
     }
 
     protected override void OnAttackUpdate()

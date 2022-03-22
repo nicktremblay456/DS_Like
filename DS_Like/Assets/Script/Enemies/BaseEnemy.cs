@@ -9,8 +9,10 @@ using TNT.StateMachine;
 public abstract class BaseEnemy : MonoBehaviour, IDamageable
 {
     [SerializeField] protected bool m_IsPatrol = false;
+    [SerializeField] protected float m_PatrolWaitDelay = 2f;
     [SerializeField] protected Transform[] m_WayPoints;
-    protected int m_WayPointIndex;
+    private int m_WayPointIndex;
+    private float m_ResetPatrolWait;
     [Space]
     [SerializeField] protected int m_MaxHealth;
     [SerializeField] protected float m_AttackThreshold;
@@ -47,6 +49,8 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
         m_Target = FindObjectOfType<PlayerController>();
 
         m_Health = new Health(m_MaxHealth, 0);
+
+        m_ResetPatrolWait = m_PatrolWaitDelay;
 
         InitSM();
     }
@@ -86,7 +90,21 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     
     protected void Patrol()
     {
-        m_Agent.SetDestination(m_WayPoints[m_WayPointIndex].position);
+        //bool ready = true;
+
+        if (Vector3.Distance(transform.position, m_WayPoints[m_WayPointIndex].position) < 1f)
+        {
+            //if (ready) ready = false;
+            //m_PatrolWaitDelay -= Time.deltaTime;
+            //if (m_PatrolWaitDelay <= 0f)
+            //{
+            //    ready = true;
+            //    m_PatrolWaitDelay = m_ResetPatrolWait;
+                NextWayPoint();
+            //}
+        }
+        //if (ready)
+            m_Agent.SetDestination(m_WayPoints[m_WayPointIndex].position);
     }
 
     protected void NextWayPoint()
