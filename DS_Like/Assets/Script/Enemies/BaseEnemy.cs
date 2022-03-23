@@ -21,8 +21,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
 
     [SerializeField] protected UnityEvent m_OnDeathEvent;
 
-    protected bool m_IsDeath = false;
-    public bool IsDeath { get => m_IsDeath; }
+    protected bool m_IsDead = false;
 
     protected enum State
     {
@@ -39,6 +38,8 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     protected EnemyFOV m_Fov;
 
     public GameObject Target { get => m_Target.gameObject; }
+    public bool IsDeath { get => m_IsDead; }
+
 
     protected virtual void Awake()
     {
@@ -58,7 +59,7 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     protected virtual void Update()
     {
         m_SM.UpdateSM();
-        if (m_IsDeath)
+        if (m_IsDead)
         {
             if (!IsTargetInRange(100)) gameObject.SetActive(false);
         }
@@ -90,20 +91,20 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     
     protected void Patrol()
     {
-        //bool ready = true;
+        bool ready = true;
 
         if (Vector3.Distance(transform.position, m_WayPoints[m_WayPointIndex].position) < 1f)
         {
-            //if (ready) ready = false;
-            //m_PatrolWaitDelay -= Time.deltaTime;
-            //if (m_PatrolWaitDelay <= 0f)
-            //{
-            //    ready = true;
-            //    m_PatrolWaitDelay = m_ResetPatrolWait;
+            if (ready) ready = false;
+            m_PatrolWaitDelay -= Time.deltaTime;
+            if (m_PatrolWaitDelay <= 0f)
+            {
+                ready = true;
+                m_PatrolWaitDelay = m_ResetPatrolWait;
                 NextWayPoint();
-            //}
+            }
         }
-        //if (ready)
+        if (ready)
             m_Agent.SetDestination(m_WayPoints[m_WayPointIndex].position);
     }
 

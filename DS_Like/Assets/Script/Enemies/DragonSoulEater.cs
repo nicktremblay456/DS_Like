@@ -52,7 +52,7 @@ public class DragonSoulEater : BaseEnemy
         {
             if (!m_IsEngaged) m_IsEngaged = true;
             m_HealthBar.Health.TakeDamage(damageAmount);
-            if (m_HealthBar.Health.CurrentHealth <= 0f && !m_IsDeath) ChangeState(State.Death);
+            if (m_HealthBar.Health.CurrentHealth <= 0f && !m_IsDead) ChangeState(State.Death);
         }
         else base.TakeDamage(damageAmount, ignoreRoll);
     }
@@ -103,7 +103,7 @@ public class DragonSoulEater : BaseEnemy
         }
         if (m_Target.IsDead) ChangeState(State.Idle);
 
-        if (!m_IsDeath)
+        if (!m_IsDead)
         {
             m_AttackTimer -= Time.deltaTime;
             if (m_AttackTimer <= 0f)
@@ -119,7 +119,7 @@ public class DragonSoulEater : BaseEnemy
         m_Animator.ResetTrigger(m_HashAttack);
         DeactivateDamageTrigger();
 
-        if (!m_IsDeath)
+        if (!m_IsDead)
         {
             // Spawn Fireball
             m_Animator.SetInteger(m_HashRandom, 3);
@@ -136,13 +136,13 @@ public class DragonSoulEater : BaseEnemy
 
     protected override void OnDeathUpdate()
     {
-        if (!m_IsDeath)
+        if (!m_IsDead)
         {
             m_DespawnTimer -= Time.deltaTime;
             if (m_DespawnTimer <= 0f)
             {
                 m_HealthBar.gameObject.SetActive(false);
-                m_IsDeath = true;
+                m_IsDead = true;
                 DeactivateDamageTrigger();
                 enabled = false;
             }

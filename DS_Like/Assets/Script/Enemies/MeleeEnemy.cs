@@ -12,7 +12,7 @@ public class MeleeEnemy : BaseEnemy
     private Collider m_Collider;
     private bool m_IsAttacking = false;
 
-    private readonly int m_HashWalk = Animator.StringToHash("IsRunning");
+    private readonly int m_HashSpeed = Animator.StringToHash("Speed");
     private readonly int m_HashAttack = Animator.StringToHash("Attack");
     private readonly int m_HashTakeDmg = Animator.StringToHash("TakeDamage");
     private readonly int m_HashDead = Animator.StringToHash("IsDead");
@@ -21,13 +21,25 @@ public class MeleeEnemy : BaseEnemy
     {
         base.Awake();
         m_Collider = GetComponentInChildren<Collider>();
-        if (m_IsDeath) m_Collider.enabled = false;
+        if (m_IsDead) m_Collider.enabled = false;
         m_ResetTimer = m_AttackDelay;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        HandleAnimation();
+    }
+
+    private void HandleAnimation()
+    {
+        m_Animator.SetInteger(m_HashSpeed, (int)m_Agent.velocity.z);
+        m_Animator.SetBool(m_HashDead, m_IsDead);
     }
 
     public override void TakeDamage(int damageAmount, bool ignoreRoll = false)
     {
-        if (!m_IsDeath) m_Animator.SetTrigger(m_HashTakeDmg);
+        if (!m_IsDead) m_Animator.SetTrigger(m_HashTakeDmg);
         if (m_Weapon.Collider.enabled) m_Weapon.DeactivateWeaponCollider();
 
         base.TakeDamage(damageAmount, ignoreRoll);
@@ -35,26 +47,17 @@ public class MeleeEnemy : BaseEnemy
 
     protected override void OnIdleEnter()
     {
-        if (!m_IsPatrol)
-        {
-            m_Animator.SetBool(m_HashWalk, false);
-            StopMovement();
-        }
-        else m_Animator.SetBool(m_HashWalk, true);
+        if (!m_IsPatrol) StopMovement();
     }
 
     protected override void OnIdleUpdate()
     {
-        if (m_IsPatrol)
-        {
-            Patrol();
-        }
+        if (m_IsPatrol) Patrol();
         if (m_Fov.CanSeePlayer && !m_Target.IsDead || m_IsEngaged) ChangeState(State.Chase);
     }
 
     protected override void OnChaseEnter()
     {
-        m_Animator.SetBool(m_HashWalk, true);
         GainMovement();
     }
 
@@ -67,9 +70,8 @@ public class MeleeEnemy : BaseEnemy
 
     protected override void OnAttackEnter()
     {
-        m_Animator.SetBool(m_HashWalk, false);
         StopMovement();
-        Attack();
+        //Attack();
     }
 
     protected override void OnAttackUpdate()
@@ -93,9 +95,9 @@ public class MeleeEnemy : BaseEnemy
 
     protected override void OnDeathEnter()
     {
-        m_IsDeath = true;
+        m_IsDead = true;
         m_Weapon.DeactivateWeaponCollider();
-        m_Animator.SetBool(m_HashDead, m_IsDeath);
+        m_Animator.SetBool(m_HashDead, m_IsDead);
         if (m_OnDeathEvent != null) m_OnDeathEvent.Invoke();
     }
 
