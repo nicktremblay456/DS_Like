@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private float m_ResetSprintDelay;
     private float m_SprintStamDelay = 0.5f;
+
     private const int SPRINT_STAM_COST = 2;
     private const int ROLL_STAM_COST = 15;
     private const int JUMP_ATTACK_COST = 25;
@@ -398,7 +399,8 @@ public class PlayerController : MonoBehaviour, IDamageable
         }
         else
         {
-            if (m_HealthBars.Health.CurrentStamina < JUMP_ATTACK_COST) return;
+            if (m_HealthBars.Health.CurrentStamina < JUMP_ATTACK_COST || m_IsAttacking) return;
+            m_IsAttacking = true;
             m_HealthBars.UseStamina(JUMP_ATTACK_COST);
             m_Weapon.SetJumpAttackDamage();
             if (m_NbrOfClicks == 1) m_Animator.SetTrigger(m_HashJumpAttack);
@@ -419,6 +421,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     public void OnJumpAttackEnd()
     {
+        m_IsAttacking = false;
         m_Weapon.ResetDamage();
     }
     #endregion

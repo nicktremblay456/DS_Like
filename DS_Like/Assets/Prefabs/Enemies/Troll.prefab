@@ -24113,7 +24113,7 @@ Transform:
   m_GameObject: {fileID: 275532804075394634}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 523.899, y: 3.7562861, z: 473.55746}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children:
   - {fileID: 275532804075616874}
   - {fileID: 275532804075617204}
@@ -24158,6 +24158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsPatrol: 0
+  m_PatrolWaitDelay: 2
   m_WayPoints: []
   m_MaxHealth: 250
   m_AttackThreshold: 2

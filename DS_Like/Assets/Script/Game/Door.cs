@@ -5,6 +5,7 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     [SerializeField] private bool m_IsLockedOnStart = false;
+    [SerializeField] private KeyCode m_ActivationKey = KeyCode.E;
 
     private Animator m_Animator;
 
@@ -38,6 +39,8 @@ public class Door : MonoBehaviour
         if (0 != (LayerMask.GetMask("Player") & 1 << other.gameObject.layer))
         {
             m_IsInRange = true;
+            if (m_IsOpen && !m_IsLocked) MessageText.Instance.SetText($"Press [{m_ActivationKey}] to close door");
+            else if(!m_IsOpen && !m_IsLocked) MessageText.Instance.SetText($"Press [{m_ActivationKey}] to open door");
         }
         if (0 != (LayerMask.GetMask("Enemy") & 1 << other.gameObject.layer))
         {
@@ -54,6 +57,7 @@ public class Door : MonoBehaviour
         if (0 != (LayerMask.GetMask("Player") & 1 << other.gameObject.layer))
         {
             m_IsInRange = false;
+            MessageText.Instance.HideMessage();
         }
     }
 
