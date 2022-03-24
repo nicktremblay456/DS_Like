@@ -18,7 +18,7 @@ public class TriggerEvent : MonoBehaviour
     private void Awake()
     {
         m_Collider = GetComponent<Collider>();
-        if (!m_Collider.isTrigger) m_Collider.isTrigger = true;
+        //if (!m_Collider.isTrigger) m_Collider.isTrigger = true;
     }
 
     private void OnCollisionEnter(Collision collision)

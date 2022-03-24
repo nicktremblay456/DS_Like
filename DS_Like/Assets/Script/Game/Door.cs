@@ -12,7 +12,7 @@ public class Door : MonoBehaviour
     private bool m_IsOpen = false;
     private bool m_IsInRange = false;
 
-    private bool m_IsDoorLocked = false;
+    private bool m_IsLocked = false;
 
     private readonly int m_HashOpen = Animator.StringToHash("Open");
     private readonly int m_HashClose = Animator.StringToHash("Close");
@@ -20,12 +20,12 @@ public class Door : MonoBehaviour
     private void Awake()
     {
         m_Animator = GetComponent<Animator>();
-        if (m_IsLockedOnStart) m_IsDoorLocked = true;
+        if (m_IsLockedOnStart) m_IsLocked = true;
     }
 
     private void Update()
     {
-        if (!m_IsDoorLocked && m_IsInRange && m_IsReady && Input.GetKeyDown(KeyCode.E))
+        if (!m_IsLocked && m_IsInRange && m_IsReady && Input.GetKeyDown(KeyCode.E))
         {
             m_IsOpen = !m_IsOpen;
             m_IsReady = false;
@@ -41,7 +41,6 @@ public class Door : MonoBehaviour
         }
         if (0 != (LayerMask.GetMask("Enemy") & 1 << other.gameObject.layer))
         {
-            Debug.Log("Enemy Open Door");
             if (!m_IsOpen)
             {
                 m_IsOpen = true;
@@ -74,12 +73,12 @@ public class Door : MonoBehaviour
 
     public void UnlockDoor()
     {
-        m_IsDoorLocked = false;
+        m_IsLocked = false;
     }
 
     public void OpenAndUnlockDoor()
     {
-        m_IsDoorLocked = false;
+        m_IsLocked = false;
         if (!m_IsOpen)
         {
             m_IsOpen = true;
@@ -89,7 +88,7 @@ public class Door : MonoBehaviour
 
     public void CloseAndLockDoor()
     {
-        m_IsDoorLocked = true;
+        m_IsLocked = true;
         if (m_IsOpen)
         {
             m_IsOpen = false;
