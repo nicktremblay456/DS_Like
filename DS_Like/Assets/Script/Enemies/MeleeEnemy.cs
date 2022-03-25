@@ -33,7 +33,7 @@ public class MeleeEnemy : BaseEnemy
 
     private void HandleAnimation()
     {
-        m_Animator.SetInteger(m_HashSpeed, (int)m_Agent.velocity.z);
+        m_Animator.SetInteger(m_HashSpeed, (int)m_Agent.velocity.magnitude);
         m_Animator.SetBool(m_HashDead, m_IsDead);
     }
 
@@ -45,6 +45,7 @@ public class MeleeEnemy : BaseEnemy
         base.TakeDamage(damageAmount, ignoreRoll);
     }
 
+    #region States
     protected override void OnIdleEnter()
     {
         if (!m_IsPatrol) StopMovement();
@@ -105,6 +106,7 @@ public class MeleeEnemy : BaseEnemy
     {
 
     }
+    #endregion
 
     private void Attack()
     {

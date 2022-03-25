@@ -24,12 +24,12 @@ public class MeleeWeapon : MonoBehaviour
         if (0 != (m_DamageableLayer.value & 1 << other.gameObject.layer))
         {
             IDamageable damageable = other.GetComponentInParent<IDamageable>();
-            m_Collider.enabled = false;
             // Do damage
             if (damageable != null) damageable.TakeDamage(m_Damage, false);
             // Hit fx
             GameObject hitFx = PoolMgr.Instance.Spawn("FX_Blood", other.transform.position, other.transform.rotation);
             hitFx.transform.localScale = other.gameObject.transform.localScale / 2; 
+            m_Collider.enabled = false;
         }
     }
 

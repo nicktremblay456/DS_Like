@@ -162,8 +162,8 @@ public class DragonSoulEater : BaseEnemy
 
     private void DeactivateDamageTrigger()
     {
-        if (m_Tail.Collider.enabled) m_Tail.Collider.enabled = false;
-        if (m_Jaw.Collider.enabled) m_Jaw.Collider.enabled = false;
+        if (m_Tail.Collider.enabled) m_Tail.DeactivateWeaponCollider();
+        if (m_Jaw.Collider.enabled) m_Jaw.DeactivateWeaponCollider();
     }
 
     public void SpawnFireball()

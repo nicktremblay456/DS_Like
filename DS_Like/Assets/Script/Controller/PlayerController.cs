@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     private bool m_IsDead = false;
 
     public bool IsDrinking { get => m_IsDrinking; }
-    private bool isGrounded
+    public bool IsGrounded
     {
         get => Physics.SphereCast(transform.position + m_Collider.center, m_Collider.radius, Vector3.down, out m_HitInfo, m_Collider.height * 0.5f, m_WalkGround, QueryTriggerInteraction.Ignore);
     }
@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             if (Time.time > m_NextAttackTime)
                 Attack();
         }
-        if (m_Input.AttackInput && !isGrounded)
+        if (m_Input.AttackInput && !IsGrounded)
         {
             if (m_RigidBody.velocity.y > 0)
             {
@@ -229,10 +229,10 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void ControlMaterialPhysics()
     {
-        m_Collider.material = (isGrounded && m_GroundAngle < m_MaxGroundAngle) ? m_FrictionPhysics : m_SlippyPhysics;
+        m_Collider.material = (IsGrounded && m_GroundAngle < m_MaxGroundAngle) ? m_FrictionPhysics : m_SlippyPhysics;
 
-        if (isGrounded && m_Input.MoveInput == Vector2.zero) m_Collider.material = m_MaxFrictionPhysics;
-        else if (isGrounded && m_Input.MoveInput != Vector2.zero) m_Collider.material = m_FrictionPhysics;
+        if (IsGrounded && m_Input.MoveInput == Vector2.zero) m_Collider.material = m_MaxFrictionPhysics;
+        else if (IsGrounded && m_Input.MoveInput != Vector2.zero) m_Collider.material = m_FrictionPhysics;
         else m_Collider.material = m_SlippyPhysics;
     }
 
@@ -240,7 +240,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         m_Animator.SetFloat(m_HashVelocityY, m_RigidBody.velocity.y);
         m_Animator.SetInteger(m_HashSpeed, (int)m_CurrentSpeed);
-        m_Animator.SetBool(m_HashGrounded, isGrounded);
+        m_Animator.SetBool(m_HashGrounded, IsGrounded);
     }
 
     private void CalculateDirection ()
@@ -256,7 +256,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     private void CalculateForward ()
     {
         // Calculer le forward selon l'angle du sol.
-        if (isGrounded)
+        if (IsGrounded)
         {
             // Retourne le vector "Forward" en considérant la "pente".
             m_Forward = Vector3.Cross(m_HitInfo.normal, -transform.right);
@@ -268,7 +268,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         // Calcule l'angle du sol, en utilisant sa normal.
         //Debug.Log("Ground Angle: " + m_GroundAngle + " | " + "m_MaxGroundAngle: " + (m_GroundAngle + 90f));
-        if (isGrounded)
+        if (IsGrounded)
         {
             // On détermine l'angle du sol en utilisant la normal et notre forward.            
             m_GroundAngle = Vector3.Angle(m_HitInfo.normal, transform.forward);
@@ -303,7 +303,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void Jump ()
     {
-        if (isGrounded && !m_IsRolling && !m_IsDrinking)
+        if (IsGrounded && !m_IsRolling && !m_IsDrinking)
         {
             m_RigidBody.AddForce(transform.up * m_JumpForce);
         }
@@ -311,7 +311,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void Roll()
     {
-        if (!m_IsRolling && isGrounded && !m_IsAttacking && !m_IsDrinking)
+        if (!m_IsRolling && IsGrounded && !m_IsAttacking && !m_IsDrinking)
         {
             if (m_HealthBars.Health.CurrentStamina >= ROLL_STAM_COST)
             {
@@ -381,7 +381,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         m_LastClickedTime = Time.time;
         m_NbrOfClicks++;
-        if (isGrounded)
+        if (IsGrounded)
         {
             if (m_NbrOfClicks == 1) m_Animator.SetBool(m_HashAttackOne, true); ;
             m_NbrOfClicks = Mathf.Clamp(m_NbrOfClicks, 0, 3);
