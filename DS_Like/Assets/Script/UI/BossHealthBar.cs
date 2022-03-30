@@ -27,6 +27,7 @@ public class BossHealthBar : MonoBehaviour
         gameObject.SetActive(true);
         m_BossNameText.text = name;
         m_Health = new Health(maxHealth, 0);
+        UpdateHealthInfo();// Call UpdateHealthInfo() to reset the boss health bar
         m_Health.OnHealthChanged += Health_OnHealthChanged;
     }
 

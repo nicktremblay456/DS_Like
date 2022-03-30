@@ -28,7 +28,7 @@ public class MeleeWeapon : MonoBehaviour
             if (damageable != null) damageable.TakeDamage(m_Damage, false);
             // Hit fx
             GameObject hitFx = PoolMgr.Instance.Spawn("FX_Blood", other.transform.position, other.transform.rotation);
-            hitFx.transform.localScale = other.gameObject.transform.localScale / 2; 
+            hitFx.transform.localScale = other.gameObject.transform.localScale * 0.5f;
             m_Collider.enabled = false;
         }
     }
