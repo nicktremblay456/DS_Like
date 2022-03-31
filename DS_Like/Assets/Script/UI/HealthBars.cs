@@ -10,14 +10,17 @@ public class HealthBars : MonoBehaviour
     public static HealthBars Instance { get => m_Instance; }
 
     private Health m_Health;
+    private Level m_Level;
 
     [SerializeField] private Image m_HpBar;
     [SerializeField] private Image m_SpBar;
+    [SerializeField] private Image m_ExpBar;
 
     private Coroutine m_StaminaRegenRoutine;
     private WaitForSeconds m_RegenTick = new WaitForSeconds(0.1f);
 
     public Health Health { get => m_Health; }
+    public Level Level { get => m_Level; }
 
     private void Awake()
     {
@@ -25,6 +28,10 @@ public class HealthBars : MonoBehaviour
 
         m_Health = new Health(100, 100);
         m_Health.OnHealthChanged += Health_OnHealthChanged;
+
+        m_Level = new Level();
+        m_Level.OnLevelChanged += Level_OnLevelChanged;
+        m_Level.OnExpChanged += Level_OnExpChanged;
     }
 
     private void Health_OnHealthChanged(object sender, EventArgs e)
@@ -52,7 +59,6 @@ public class HealthBars : MonoBehaviour
         m_StaminaRegenRoutine = null;
     }
 
-    #region public Methods
     public void TakeDamage(int a_Damage)
     {
         m_Health.TakeDamage(a_Damage);
@@ -69,6 +75,18 @@ public class HealthBars : MonoBehaviour
     {
         if (m_Health != null) m_Health.UpdateMaxHealthStats(a_MaxHealth, a_MaxStamina);
         else m_Health = new Health(a_MaxHealth, a_MaxStamina);
+    }
+
+    #region Level/Experience Methods
+
+    private void Level_OnLevelChanged(object sender, EventArgs e)
+    {
+        m_ExpBar.rectTransform.sizeDelta += new Vector2(10, 0);
+    }
+
+    private void Level_OnExpChanged(object sender, EventArgs e)
+    {
+        m_ExpBar.fillAmount = m_Level.GetExpNormalized;
     }
     #endregion
 }

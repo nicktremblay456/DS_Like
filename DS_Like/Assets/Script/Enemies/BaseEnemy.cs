@@ -8,6 +8,8 @@ using TNT.StateMachine;
 [RequireComponent(typeof(NavMeshAgent)), RequireComponent(typeof(Animator))]
 public abstract class BaseEnemy : MonoBehaviour, IDamageable
 {
+    [SerializeField] protected int m_ExpReward = 25;
+    [Space]
     [SerializeField] protected bool m_IsPatrol = false;
     [SerializeField] protected float m_PatrolWaitDelay = 2f;
     [SerializeField] protected Transform[] m_WayPoints;
@@ -130,6 +132,11 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     protected bool IsTargetInRange(float threshold)
     {
         return Vector3.Distance(transform.position, m_Target.transform.position) <= threshold;
+    }
+
+    protected void ExpReward()
+    {
+        m_Target.AddExp(m_ExpReward);
     }
 
     // IDamageable methods

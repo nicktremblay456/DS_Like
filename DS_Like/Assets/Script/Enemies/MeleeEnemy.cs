@@ -99,6 +99,7 @@ public class MeleeEnemy : BaseEnemy
         m_IsDead = true;
         m_Weapon.DeactivateWeaponCollider();
         m_Animator.SetBool(m_HashDead, m_IsDead);
+        ExpReward();
         if (m_OnDeathEvent != null) m_OnDeathEvent.Invoke();
     }
 

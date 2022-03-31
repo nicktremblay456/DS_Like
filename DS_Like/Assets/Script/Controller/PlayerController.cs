@@ -443,4 +443,9 @@ public class PlayerController : MonoBehaviour, IDamageable
             m_Input.ReleaseControl();
         }
     }
+
+    public void AddExp(int amount)
+    {
+        m_HealthBars.Level.AddExp(amount);
+    }
 }
